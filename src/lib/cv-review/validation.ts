@@ -1,7 +1,7 @@
 import { LANGUAGES, PURPOSES, type AnalyzeRequest } from "./types";
 
-const languageValues = new Set(LANGUAGES.map((language) => language.value));
-const purposeValues = new Set(PURPOSES.map((purpose) => purpose.value));
+const languageValues: Set<string> = new Set(LANGUAGES.map((language) => language.value));
+const purposeValues: Set<string> = new Set(PURPOSES.map((purpose) => purpose.value));
 
 export function validateAnalyzeRequest(input: unknown): AnalyzeRequest {
   if (!input || typeof input !== "object") {
@@ -24,11 +24,11 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeRequest {
     throw new Error("CV text is too long. Please keep it under 60,000 characters.");
   }
 
-  if (!languageValues.has(language as AnalyzeRequest["language"])) {
+  if (!languageValues.has(language)) {
     throw new Error("Language must be English or Bahasa Indonesia.");
   }
 
-  if (!purposeValues.has(purpose as AnalyzeRequest["purpose"])) {
+  if (!purposeValues.has(purpose)) {
     throw new Error("Review purpose is not supported.");
   }
 
@@ -47,15 +47,14 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeRequest {
 }
 
 export function extractJsonObject(text: string) {
-  const cleaned = text.replace(/```json|```/g, "").trim();
-  const first = cleaned.indexOf("{");
-  const last = cleaned.lastIndexOf("}");
+  const first = text.indexOf("{");
+  const last = text.lastIndexOf("}");
 
   if (first === -1 || last === -1 || last <= first) {
     throw new Error("Model response did not contain a JSON object.");
   }
 
-  return JSON.parse(cleaned.slice(first, last + 1));
+  return JSON.parse(text.slice(first, last + 1));
 }
 
 export function scoreTone(score: number | null) {
