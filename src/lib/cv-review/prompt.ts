@@ -1,8 +1,17 @@
 import type { AnalyzeRequest } from "./types";
 
+const targetedSectionShape = `,
+  "jobFit": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
+  "tailoredContent": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
+  "experienceMatch": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" }`;
+
 export function buildCVReviewPrompt(request: AnalyzeRequest) {
   const languageName = request.language === "id" ? "Bahasa Indonesia" : "English";
   const hasJobTarget = Boolean(request.jobRole || request.jobDescription);
+  const targetedSectionRule = hasJobTarget
+    ? "- Include jobFit, tailoredContent, and experienceMatch because a target role or job description exists."
+    : "- Do not include jobFit, tailoredContent, or experienceMatch because no target role or job description exists.";
+  const targetedSections = hasJobTarget ? targetedSectionShape : "";
 
   return `You are HireFit's expert ATS resume reviewer and recruiter coach.
 Analyze the CV for ATS readiness, recruiter readability, and practical improvement.
@@ -22,7 +31,7 @@ Rules:
 - priorityPlan must contain exactly 5 high-impact fixes.
 - atsWarnings must contain 3 to 6 concise warnings or confirmations.
 - Each normal section must include 2-4 whatWorks, 2-4 problemsFound, 3-5 actionPoints, 1-3 examples.
-- Include jobFit, tailoredContent, and experienceMatch only when target role or job description exists: ${hasJobTarget}.
+${targetedSectionRule}
 
 Return this exact JSON shape:
 {
@@ -55,10 +64,7 @@ Return this exact JSON shape:
     "recommendedRoles": ["string"],
     "recommendedIndustries": ["string"],
     "nextSteps": ["string"]
-  },
-  "jobFit": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-  "tailoredContent": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-  "experienceMatch": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" }
+  }${targetedSections}
 }
 
 CV text:

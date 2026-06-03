@@ -19,7 +19,10 @@ export async function POST(request: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL ?? fallbackModel });
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL ?? fallbackModel,
+      generationConfig: { responseMimeType: "application/json" },
+    });
     const result = await model.generateContent(buildCVReviewPrompt(analyzeRequest));
     const rawText = result.response.text();
     const parsed = extractJsonObject(rawText);
