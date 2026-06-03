@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { CVReviewForm } from "@/components/cv-review/cv-review-form";
+import { CVReviewForm, ResultView } from "@/components/cv-review";
 import { AnalyzeRequest, CVReviewResult } from "@/lib/cv-review/types";
 
 export default function Home() {
@@ -95,17 +95,15 @@ export default function Home() {
             {loading && <p className="text-sm text-cyan-200">Analyzing your CV...</p>}
           </div>
 
-          {analysis ? (
-            <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950 p-5">
-              <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Task 4 placeholder</p>
-              <p className="mt-2 text-lg font-semibold">Result received. Score: {analysis.overallScore}/100</p>
-              <p className="mt-2 text-slate-300">{analysis.summary}</p>
-            </div>
-          ) : (
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-950/70 p-8 text-center text-slate-400">
-              Submit your CV to generate the Task 4 result UI data.
-            </div>
-          )}
+          <div className="mt-6">
+            {analysis ? (
+              <ResultView result={analysis} />
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/70 p-8 text-center text-slate-400">
+                Submit your CV to generate the full review result.
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </main>
