@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HireFit - AI CV & Job Description Matcher",
-  description: "Lightweight AI reviewer that checks how well your CV fits a Job Description and provides honest rewrite suggestions.",
+  title: "HireFit AI CV Reviewer",
+  description: "AI CV reviewer for ATS readiness, job fit, keywords, and actionable career improvements.",
 };
 
 export default function RootLayout({
@@ -31,3 +31,4 @@ export default function RootLayout({
     </html>
   );
 }
+
