@@ -1,8 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CVReviewForm, ResultView } from "@/components/cv-review";
-import { AnalyzeRequest, CVReviewResult } from "@/lib/cv-review/types";
+import { CVReviewForm } from "@/components/cv-review";
+import { AnalyzeRequest } from "@/lib/cv-review/types";
 
 const features = [
   {
@@ -35,17 +36,16 @@ const faqs = [
 ];
 
 export default function Home() {
-  const [analysis, setAnalysis] = useState<CVReviewResult | null>(null);
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleReviewSubmit(request: AnalyzeRequest) {
     setLoading(true);
     setError("");
-    setAnalysis(null);
 
     try {
-      const response = await fetch("/api/analyze", {
+      const response = await fetch("/api/cv-reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
@@ -54,10 +54,9 @@ export default function Home() {
       if (!response.ok) {
         throw new Error(data.error ?? "CV review failed. Please try again.");
       }
-      setAnalysis(data as CVReviewResult);
+      router.push(`/results/${data.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "CV review failed. Please try again.");
-    } finally {
       setLoading(false);
     }
   }
@@ -117,27 +116,6 @@ export default function Home() {
         </section>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">Review result</p>
-              <h2 className="mt-2 text-2xl font-bold">Structured CV analysis will appear here.</h2>
-            </div>
-            {loading && <p className="text-sm text-cyan-700">Analyzing your CV...</p>}
-          </div>
-
-          <div className="mt-6">
-            {analysis ? (
-              <ResultView result={analysis} />
-            ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500">
-                Submit your CV to generate the full review result.
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       <section id="features" className="mx-auto max-w-6xl px-6 pb-16">
         <div className="mb-8 max-w-2xl">

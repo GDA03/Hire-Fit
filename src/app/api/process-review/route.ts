@@ -48,4 +48,14 @@ async function handler(request: Request) {
   }
 }
 
-export const POST = verifySignatureAppRouter(handler);
+export async function POST(request: Request) {
+  if (!process.env.QSTASH_CURRENT_SIGNING_KEY || !process.env.QSTASH_NEXT_SIGNING_KEY) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ error: "Missing QStash signing keys" }, { status: 500 });
+    }
+
+    return handler(request);
+  }
+
+  return verifySignatureAppRouter(handler)(request);
+}

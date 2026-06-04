@@ -81,10 +81,12 @@ export type SectionKey = (typeof SECTION_DEFINITIONS)[number]["key"];
 
 export const MAX_CV_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
-export type ReviewStatus = 'pending' | 'completed' | 'failed';
+export type ReviewStatus = "queued" | "processing" | "completed" | "failed";
 
 export type ReviewState = {
+  id: string;
   status: ReviewStatus;
+  request: AnalyzeRequest;
   result?: CVReviewResult;
   error?: string;
   createdAt: number;

@@ -12,20 +12,5 @@ export async function GET(
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
 
-  if (state.status !== "completed" || !state.result) {
-    return NextResponse.json(
-      {
-        id,
-        status: state.status,
-        error: state.error,
-      },
-      { status: 202 }
-    );
-  }
-
-  return NextResponse.json({
-    id,
-    status: state.status,
-    result: state.result,
-  });
+  return NextResponse.json(state);
 }
