@@ -1,4 +1,6 @@
 export type PDFParseConfidence = "good" | "partial" | "poor";
+export type PDFExtractionSource = "client" | "server";
+export const MAX_SERVER_PDF_SIZE_BYTES = 5 * 1024 * 1024;
 
 export type PDFExtractionResult = {
   text: string;
@@ -7,6 +9,7 @@ export type PDFExtractionResult = {
   confidence: PDFParseConfidence;
   warnings: string[];
   preview: string;
+  source: PDFExtractionSource;
 };
 
 export async function extractTextFromPDF(file: File): Promise<PDFExtractionResult> {
@@ -36,8 +39,8 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractionResul
   const text = pageTexts.filter(Boolean).join("\n\n").trim();
   const characterCount = text.length;
   const averageCharsPerPage = pdf.numPages > 0 ? characterCount / pdf.numPages : 0;
-  const confidence = getConfidence(characterCount, averageCharsPerPage);
-  const warnings = getWarnings(confidence, characterCount, averageCharsPerPage);
+  const confidence = getPDFParseConfidence(characterCount, averageCharsPerPage);
+  const warnings = getPDFParseWarnings(confidence, characterCount, averageCharsPerPage);
 
   return {
     text,
@@ -46,16 +49,17 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractionResul
     confidence,
     warnings,
     preview: text.slice(0, 600),
+    source: "client",
   };
 }
 
-function getConfidence(characterCount: number, averageCharsPerPage: number): PDFParseConfidence {
+export function getPDFParseConfidence(characterCount: number, averageCharsPerPage: number): PDFParseConfidence {
   if (characterCount >= 500 && averageCharsPerPage >= 100) return "good";
   if (characterCount >= 50) return "partial";
   return "poor";
 }
 
-function getWarnings(confidence: PDFParseConfidence, characterCount: number, averageCharsPerPage: number) {
+export function getPDFParseWarnings(confidence: PDFParseConfidence, characterCount: number, averageCharsPerPage: number) {
   if (confidence === "good") {
     return ["PDF text extraction looks usable. Review extracted text before submitting."];
   }
