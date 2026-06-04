@@ -167,6 +167,17 @@ Prompt output includes:
 - career recommendation
 - optional `jobFit`, `tailoredContent`, `experienceMatch` when target role/JD exists
 
+## PDF and ATS checks phase
+
+Implemented after MVP:
+
+- client PDF extraction remains primary,
+- server PDF extraction fallback exists at `POST /api/extract-pdf`,
+- no file storage is used,
+- deterministic ATS checks run before Gemini review,
+- ATS checks cost no extra AI tokens,
+- manual paste remains fallback.
+
 ## Important files
 
 ```txt
