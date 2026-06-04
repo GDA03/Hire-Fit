@@ -26,9 +26,35 @@ Validated:
   - submit to Gemini,
   - render AI review result.
 
-Known limitation:
+PDF parsing status:
 
-- PDF parsing is not reliable yet. This is expected for this milestone. Use manual paste flow for now.
+- Client-side PDF parsing has been improved after MVP deployment.
+- PDF.js worker now uses bundled project worker config instead of CDN worker URL.
+- Upload now reports page count, extracted character count, parse confidence, warnings, and extracted text preview.
+- Manual paste flow remains fallback and current safest path for image-based or ATS-unfriendly PDFs.
+
+## Production deployment
+
+Production deploy completed and is ready.
+
+```txt
+Production URL: https://hire-fit-one.vercel.app
+Deployment ID: dpl_A5vv624JHLsaWxUbthKchNRJynED
+Deployment target: production
+Deployment status: READY
+Build duration: 13s
+Smoke check: homepage returned HTTP 200 and contained HireFit text
+Error scan: no Vercel error logs found after deploy
+```
+
+Production environment variables configured in Vercel:
+
+```txt
+GEMINI_API_KEY
+GEMINI_MODEL=gemini-2.5-flash-lite
+```
+
+Manual production test is still pending from the user.
 
 ## Environment
 

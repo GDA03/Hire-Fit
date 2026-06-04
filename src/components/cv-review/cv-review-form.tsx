@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
+import { extractTextFromPDF, type PDFExtractionResult } from "@/lib/cv-review/pdf-extraction";
 import {
   AnalyzeRequest,
   LANGUAGES,
@@ -26,6 +27,7 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
   });
   const [fileStatus, setFileStatus] = useState("");
   const [fileError, setFileError] = useState("");
+  const [extraction, setExtraction] = useState<PDFExtractionResult | null>(null);
   const [extracting, setExtracting] = useState(false);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -34,6 +36,7 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
 
     setFileStatus("");
     setFileError("");
+    setExtraction(null);
 
     if (file.type !== "application/pdf") {
       setFileError("Upload a PDF file only.");
@@ -51,30 +54,17 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
     setFileStatus(`Extracting text from ${file.name}...`);
 
     try {
-      const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+      const result = await extractTextFromPDF(file);
 
-      const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
-      const pages = await Promise.all(
-        Array.from({ length: pdf.numPages }, async (_, index) => {
-          const page = await pdf.getPage(index + 1);
-          const content = await page.getTextContent();
-          return content.items
-            .map((item) => ("str" in item ? item.str : ""))
-            .join(" ");
-        }),
-      );
-      const cvText = pages.join("\n\n").trim();
-
-      if (cvText.length < 50) {
-        setFileError("PDF text looked too short. Paste CV text manually if extraction missed content.");
-      }
-
-      setRequest((current) => ({ ...current, cvText }));
-      setFileStatus(`Extracted ${cvText.length.toLocaleString()} characters from ${file.name}.`);
-    } catch {
+      setExtraction(result);
+      setRequest((current) => ({ ...current, cvText: result.text }));
+      setFileStatus(`Extracted ${result.characterCount.toLocaleString()} characters from ${result.pageCount.toLocaleString()} page${result.pageCount === 1 ? "" : "s"}.`);
+      setFileError(result.confidence === "poor" ? "PDF text extraction looks poor. Paste CV text manually for best results." : "");
+    } catch (error) {
+      console.error(error);
       setFileError("Could not extract text from this PDF. Paste CV text manually instead.");
       setFileStatus("");
+      setExtraction(null);
     } finally {
       setExtracting(false);
     }
@@ -94,7 +84,7 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl shadow-cyan-950/20 md:p-8">
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-3 rounded-2xl border border-dashed border-cyan-400/50 bg-slate-950/70 p-5 lg:col-span-2">
+        <div className="space-y-4 rounded-2xl border border-dashed border-cyan-400/50 bg-slate-950/70 p-5 lg:col-span-2">
           <label className="block space-y-2">
             <span className="font-semibold text-slate-100">Upload CV PDF</span>
             <input
@@ -108,6 +98,7 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
           <p className="text-sm text-slate-400">Max 5MB. PDF extraction runs in your browser; pasted text remains editable.</p>
           {fileStatus && <p className="text-sm text-cyan-200">{fileStatus}</p>}
           {fileError && <p className="text-sm text-amber-200">{fileError}</p>}
+          {extraction && <PDFExtractionPreview extraction={extraction} />}
         </div>
 
         <label className="space-y-2">
@@ -192,5 +183,35 @@ export function CVReviewForm({ loading, onSubmit }: CVReviewFormProps) {
         </button>
       </div>
     </form>
+  );
+}
+
+function PDFExtractionPreview({ extraction }: { extraction: PDFExtractionResult }) {
+  const confidenceClass = {
+    good: "bg-emerald-400/15 text-emerald-200 ring-emerald-400/30",
+    partial: "bg-amber-400/15 text-amber-200 ring-amber-400/30",
+    poor: "bg-red-400/15 text-red-200 ring-red-400/30",
+  }[extraction.confidence];
+
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ring-1 ${confidenceClass}`}>
+          {extraction.confidence} parse
+        </span>
+        <span className="text-xs text-slate-400">
+          {extraction.characterCount.toLocaleString()} chars · {extraction.pageCount.toLocaleString()} page{extraction.pageCount === 1 ? "" : "s"}
+        </span>
+      </div>
+      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-300">
+        {extraction.warnings.map((warning) => <li key={warning}>{warning}</li>)}
+      </ul>
+      {extraction.preview && (
+        <details className="mt-4 rounded-xl border border-slate-800 bg-slate-900/80 p-3">
+          <summary className="cursor-pointer text-sm font-semibold text-slate-200">Preview extracted text</summary>
+          <p className="mt-3 whitespace-pre-wrap text-xs leading-6 text-slate-400">{extraction.preview}</p>
+        </details>
+      )}
+    </div>
   );
 }
