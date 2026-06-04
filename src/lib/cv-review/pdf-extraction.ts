@@ -1,6 +1,5 @@
 export type PDFParseConfidence = "good" | "partial" | "poor";
 export type PDFExtractionSource = "client" | "server";
-export const MAX_SERVER_PDF_SIZE_BYTES = 5 * 1024 * 1024;
 
 export type PDFExtractionResult = {
   text: string;
@@ -11,6 +10,8 @@ export type PDFExtractionResult = {
   preview: string;
   source: PDFExtractionSource;
 };
+
+export const MAX_SERVER_PDF_SIZE_BYTES = 5 * 1024 * 1024;
 
 export async function extractTextFromPDF(file: File): Promise<PDFExtractionResult> {
   const pdfjsLib = await import("pdfjs-dist");
