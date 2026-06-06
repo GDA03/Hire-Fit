@@ -1,7 +1,11 @@
 import { Redis } from '@upstash/redis';
+import { readEnv } from '@/lib/env';
 import type { ReviewState } from './types';
 
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url: readEnv('UPSTASH_REDIS_REST_URL') || readEnv('KV_REST_API_URL') || '',
+  token: readEnv('UPSTASH_REDIS_REST_TOKEN') || readEnv('KV_REST_API_TOKEN') || '',
+});
 const STATE_EXPIRY_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
 export async function saveReviewState(state: ReviewState): Promise<void> {

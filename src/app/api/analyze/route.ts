@@ -2,19 +2,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import { buildCVReviewPrompt } from "@/lib/cv-review/prompt";
 import { extractJsonObject, validateAnalyzeRequest } from "@/lib/cv-review/validation";
+import { readEnv } from "@/lib/env";
 import type { AnalyzeRequest, CVReviewResult } from "@/lib/cv-review/types";
 
 const fallbackModel = "gemini-2.5-flash-lite";
 
 export async function runGeminiAnalysis(analyzeRequest: AnalyzeRequest): Promise<CVReviewResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = readEnv("GEMINI_API_KEY");
   if (!apiKey) {
     throw new Error("Missing GEMINI_API_KEY.");
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: process.env.GEMINI_MODEL ?? fallbackModel,
+    model: readEnv("GEMINI_MODEL") ?? fallbackModel,
     generationConfig: { responseMimeType: "application/json" },
   });
   const result = await model.generateContent(buildCVReviewPrompt(analyzeRequest));

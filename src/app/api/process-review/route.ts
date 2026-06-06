@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
 import { runGeminiAnalysis } from "@/app/api/analyze/route";
+import { readEnv } from "@/lib/env";
 
 export const maxDuration = 60;
 
@@ -49,7 +50,10 @@ async function handler(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.QSTASH_CURRENT_SIGNING_KEY || !process.env.QSTASH_NEXT_SIGNING_KEY) {
+  const currentSigningKey = readEnv("QSTASH_CURRENT_SIGNING_KEY");
+  const nextSigningKey = readEnv("QSTASH_NEXT_SIGNING_KEY");
+
+  if (!currentSigningKey || !nextSigningKey) {
     if (process.env.NODE_ENV === "production") {
       return NextResponse.json({ error: "Missing QStash signing keys" }, { status: 500 });
     }
@@ -57,5 +61,8 @@ export async function POST(request: Request) {
     return handler(request);
   }
 
-  return verifySignatureAppRouter(handler)(request);
+  return verifySignatureAppRouter(handler, {
+    currentSigningKey,
+    nextSigningKey,
+  })(request);
 }

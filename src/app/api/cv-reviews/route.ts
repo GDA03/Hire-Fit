@@ -2,11 +2,13 @@ import { after, NextResponse } from "next/server";
 import { validateAnalyzeRequest } from "@/lib/cv-review/validation";
 import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
 import { runGeminiAnalysis } from "@/app/api/analyze/route";
+import { readEnv } from "@/lib/env";
 import { Client } from "@upstash/qstash";
 import { v4 as uuidv4 } from "uuid";
 import type { ReviewState } from "@/lib/cv-review/types";
 
-const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
+const qstashToken = readEnv("QSTASH_TOKEN");
+const qstash = new Client({ token: qstashToken || "" });
 
 async function processReviewInBackground(reviewId: string) {
   const state = await getReviewState(reviewId);
