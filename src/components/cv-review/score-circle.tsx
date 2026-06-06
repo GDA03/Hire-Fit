@@ -6,10 +6,10 @@ type ScoreCircleProps = {
 
 function getScoreTone(score: number | null) {
   if (score === null) return "text-slate-400";
-  if (score >= 80) return "text-emerald-300";
-  if (score >= 60) return "text-cyan-300";
-  if (score >= 40) return "text-amber-300";
-  return "text-red-300";
+  if (score >= 80) return "text-cyan-600";
+  if (score >= 60) return "text-[#635BFF]";
+  if (score >= 40) return "text-amber-500";
+  return "text-pink-500";
 }
 
 export function ScoreCircle({ score, label = "Score", size = "lg" }: ScoreCircleProps) {
@@ -24,7 +24,7 @@ export function ScoreCircle({ score, label = "Score", size = "lg" }: ScoreCircle
     <div className="flex flex-col items-center gap-3">
       <div className={`relative ${dimensions}`} aria-label={`${label}: ${score ?? "not scored"}`}>
         <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
-          <circle cx="50" cy="50" r={radius} fill="none" stroke="currentColor" strokeWidth="9" className="text-slate-800" />
+          <circle cx="50" cy="50" r={radius} fill="none" stroke="currentColor" strokeWidth="9" className="text-slate-200" />
           <circle
             cx="50"
             cy="50"

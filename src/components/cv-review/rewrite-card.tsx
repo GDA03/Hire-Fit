@@ -18,18 +18,18 @@ export function RewriteCard({ title, items, emptyText = "No rewrite examples pro
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-400/20 bg-cyan-950/20 p-4">
-      <h4 className="font-semibold text-cyan-100">{title}</h4>
+    <div className="rounded-3xl border border-pink-100 bg-pink-50/70 p-4">
+      <h4 className="font-black text-pink-900">{title}</h4>
       {items.length > 0 ? (
-        <ul className="mt-3 space-y-3 text-sm text-slate-300">
+        <ul className="mt-3 space-y-3 text-sm text-slate-700">
           {items.map((item, index) => (
-            <li key={`${title}-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/70 p-3 leading-6">
+            <li key={`${title}-${index}`} className="rounded-2xl border border-white/80 bg-white/80 p-3 leading-6 shadow-sm shadow-slate-900/5">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <p className="flex-1">{item}</p>
                 <button
                   type="button"
                   onClick={() => void handleCopy(item, index)}
-                  className="shrink-0 rounded-lg border border-cyan-400/30 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                  className="shrink-0 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs font-black text-pink-700 transition hover:bg-pink-100"
                   aria-label={`Copy ${title} example ${index + 1}`}
                 >
                   {copiedIndex === index ? "Copied" : "Copy"}
