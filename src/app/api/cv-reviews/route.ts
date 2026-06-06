@@ -48,9 +48,9 @@ export async function POST(request: Request) {
 
     await saveReviewState(state);
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get("host")}`;
+    const appUrl = readEnv("NEXT_PUBLIC_APP_URL") || `https://${request.headers.get("host")}`;
 
-    if (process.env.QSTASH_TOKEN) {
+    if (qstashToken) {
       await qstash.publishJSON({
         url: `${appUrl}/api/process-review`,
         body: { reviewId: id },

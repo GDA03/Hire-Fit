@@ -34,6 +34,13 @@ describe("readEnv", () => {
     expect(() => new Headers({ Authorization: `Bearer ${token}` })).not.toThrow();
   });
 
+  test("produces URLs accepted by URL parsing", () => {
+    process.env = { ...ORIGINAL_ENV, NEXT_PUBLIC_APP_URL: "﻿https://hire-fit-one.vercel.app" };
+    const appUrl = readEnv("NEXT_PUBLIC_APP_URL");
+
+    expect(() => new URL(`${appUrl}/api/process-review`)).not.toThrow();
+  });
+
   test("documents production failure when raw BOM-prefixed tokens reach Fetch headers", () => {
     expect(() => new Headers({ Authorization: "Bearer ﻿qstash-token" })).toThrow(/ByteString|Cannot convert argument/);
   });
