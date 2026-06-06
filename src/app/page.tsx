@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ArrowRight, BrainCircuit, CheckCircle2, FileSearch, Globe2, Layers3, Sparkles } from "lucide-react";
 import { DynamicBackground } from "@/components/dynamic-background";
 import { CVReviewForm } from "@/components/cv-review";
+import { BrandLink } from "@/components/site-brand";
 import { AnalyzeRequest } from "@/lib/cv-review/types";
 
 type Locale = "id" | "en";
@@ -107,12 +108,9 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden text-[#17152F]">
       <DynamicBackground />
-      <nav className="sticky top-0 z-30 border-b border-indigo-100/80 bg-white/72 px-6 py-4 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-xl font-black tracking-tight" aria-label="HireFit home">
-            <LogoMark />
-            HireFit
-          </div>
+      <nav className="sticky top-0 z-30 border-b border-indigo-100/80 bg-white/72 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          <BrandLink className="text-xl" />
           <div className="hidden items-center gap-2 text-sm font-black text-slate-600 md:flex">
             <a href="#review" className="rounded-2xl px-4 py-2 transition hover:bg-indigo-50 hover:text-[#635BFF]">{t.navReview}</a>
             <a href="#preview" className="rounded-2xl px-4 py-2 transition hover:bg-teal-50 hover:text-[#14B8A6]">{t.navMissions}</a>
@@ -217,7 +215,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="faq" className="mx-auto max-w-6xl px-6 pb-20">
+      <section id="faq" className="mx-auto max-w-6xl px-6 pb-16">
         <div className="app-card rounded-[1.75rem] bg-white/86 p-6 backdrop-blur md:p-8">
           <p className="text-sm font-black uppercase tracking-[0.16em] text-[#14B8A6]">FAQ</p>
           <h2 className="mt-3 text-3xl font-black tracking-tight">{t.faqTitle}</h2>
@@ -231,14 +229,28 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }
 
-function LogoMark() {
+function SiteFooter() {
   return (
-    <span className="grid h-12 w-12 place-items-center rounded-[1.25rem] bg-[#635BFF] text-white shadow-[0_5px_0_#4f46e5]" aria-hidden="true">
-      <BrainCircuit className="h-7 w-7" strokeWidth={2.6} />
-    </span>
+    <footer className="relative border-t border-indigo-100/80 bg-white/76 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 py-8 md:flex-row md:items-center md:justify-between">
+        <div>
+          <BrandLink className="text-lg" />
+          <p className="mt-3 max-w-md text-sm font-semibold leading-6 text-slate-600">
+            Personal portfolio project by Gerald. Built to show AI product UX, async review flow, and ATS-focused CV feedback.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3 text-sm font-black text-slate-600">
+          <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://github.com/GDA03" target="_blank" rel="noreferrer">GitHub</a>
+          <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://www.linkedin.com/in/gdustin/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://portofolio-gerald.vercel.app/" target="_blank" rel="noreferrer">Portfolio</a>
+        </div>
+      </div>
+    </footer>
   );
 }

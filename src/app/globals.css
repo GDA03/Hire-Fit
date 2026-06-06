@@ -41,10 +41,21 @@ button, input, textarea, select { font: inherit; }
   0%, 100% { transform: scaleX(0.94); }
   50% { transform: scaleX(1); }
 }
+@keyframes result-rise {
+  0% { opacity: 0; transform: translateY(18px) scale(0.98); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes result-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
 
 .animate-happy-pop { animation: happy-pop 420ms cubic-bezier(0.175, 0.885, 0.32, 1.12) both; }
 .animate-soft-float { animation: soft-float 3.2s ease-in-out infinite; }
 .animate-bar-breathe { animation: bar-breathe 1.5s ease-in-out infinite; transform-origin: left; }
+.animate-result-pulse { animation: result-pulse 4.8s ease-in-out infinite; }
+.result-motion-card { animation: result-rise 520ms cubic-bezier(0.175, 0.885, 0.32, 1.08) both; }
+.result-motion-card:hover { transform: translateY(-2px); transition: transform 180ms ease, box-shadow 180ms ease; }
 .scan-card::after {
   animation: scan-line 2s ease-in-out infinite;
   background: linear-gradient(180deg, transparent, rgba(99, 91, 255, 0.20), transparent);

@@ -13,7 +13,7 @@ function OptionalSection({ title, section }: { title: string; section?: CVReview
   if (!section) return null;
 
   return (
-    <div className="rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-xl shadow-slate-900/5 backdrop-blur">
+    <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-xl shadow-slate-900/5 backdrop-blur">
       <div className="flex flex-col gap-4 md:flex-row md:items-start">
         <ScoreCircle score={section.score} label={title} size="sm" />
         <div className="flex-1 space-y-4">
@@ -42,10 +42,10 @@ export function ResultView({ result }: ResultViewProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        <div className="rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-cyan-50 via-white to-pink-50 p-6 shadow-xl shadow-cyan-900/5">
+        <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-cyan-50 via-white to-pink-50 p-6 shadow-xl shadow-cyan-900/5">
           <ScoreCircle score={result.overallScore} label="Overall score" />
         </div>
-        <div className="space-y-4 rounded-[1.75rem] border border-white/80 bg-white/75 p-6 shadow-xl shadow-slate-900/5 backdrop-blur">
+        <div className="result-motion-card space-y-4 rounded-[1.75rem] border border-white/80 bg-white/75 p-6 shadow-xl shadow-slate-900/5 backdrop-blur" style={{ animationDelay: "80ms" }}>
           <div>
             <h3 className="text-xl font-black text-slate-950">Summary</h3>
             <p className="mt-3 leading-7 text-slate-600">{result.summary}</p>
@@ -63,11 +63,11 @@ export function ResultView({ result }: ResultViewProps) {
         </div>
       </div>
 
-      <PriorityPlan items={result.priorityPlan} />
-      <SectionAccordion sections={result.sections} />
-      <KeywordPanel keywords={result.keywords} />
+      <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan items={result.priorityPlan} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "200ms" }}><SectionAccordion sections={result.sections} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "260ms" }}><KeywordPanel keywords={result.keywords} /></div>
 
-      <div className="rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white via-cyan-50/70 to-pink-50/70 p-5 shadow-xl shadow-slate-900/5">
+      <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white via-cyan-50/70 to-pink-50/70 p-5 shadow-xl shadow-slate-900/5" style={{ animationDelay: "320ms" }}>
         <h3 className="text-lg font-black text-slate-950">Career recommendations</h3>
         <p className="mt-3 text-sm leading-6 text-slate-600">{result.careerRecommendation.summary}</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">

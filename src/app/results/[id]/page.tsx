@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { use, useEffect, useMemo, useState } from "react";
 import { ResultView } from "@/components/cv-review";
+import { BrandLink } from "@/components/site-brand";
 import type { CVReviewResult } from "@/lib/cv-review/types";
 
 type ReviewStatus = "queued" | "processing" | "completed" | "failed";
@@ -102,19 +102,17 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
   return (
     <main className="min-h-screen overflow-hidden text-slate-950">
-      <nav className="sticky top-0 z-30 border-b border-white/70 bg-white/70 px-6 py-4 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 text-lg font-black tracking-tight hover:text-cyan-700">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-cyan-500/20">HF</span>
-            HireFit
-          </Link>
-          <span className="rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-500 shadow-sm">Review {id}</span>
+      <nav className="sticky top-0 z-30 border-b border-indigo-100/80 bg-white/72 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          <BrandLink className="text-xl" />
+          <span className="truncate rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-500 shadow-sm">Review {id}</span>
         </div>
       </nav>
 
       <section className="relative mx-auto max-w-6xl px-6 py-10">
         <div className="pointer-events-none absolute -left-10 top-20 h-44 w-44 rounded-full bg-cyan-300/30 blur-3xl animate-blob-drift" />
         <div className="pointer-events-none absolute right-8 top-36 h-40 w-40 rounded-full bg-pink-300/30 blur-3xl animate-blob-drift" />
+        <div className="pointer-events-none absolute left-1/3 top-8 h-28 w-28 rounded-full bg-[#635BFF]/15 blur-3xl animate-result-pulse" />
 
         <div className="relative rounded-[2.25rem] border border-white/80 bg-white/75 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur md:p-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -142,6 +140,22 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
         </div>
       </section>
+
+      <footer className="border-t border-indigo-100/80 bg-white/76 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 py-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <BrandLink className="text-lg" />
+            <p className="mt-3 max-w-md text-sm font-semibold leading-6 text-slate-600">
+              Personal portfolio project by Gerald. CV review UX, async processing, and ATS feedback in one flow.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3 text-sm font-black text-slate-600">
+            <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://github.com/GDA03" target="_blank" rel="noreferrer">GitHub</a>
+            <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://www.linkedin.com/in/gdustin/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a className="rounded-2xl border border-indigo-100 bg-white px-4 py-2 transition hover:border-[#635BFF] hover:text-[#635BFF]" href="https://portofolio-gerald.vercel.app/" target="_blank" rel="noreferrer">Portfolio</a>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
