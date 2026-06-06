@@ -35,10 +35,16 @@ describe("readEnv", () => {
   });
 
   test("produces URLs accepted by URL parsing", () => {
-    process.env = { ...ORIGINAL_ENV, NEXT_PUBLIC_APP_URL: "﻿https://hire-fit-one.vercel.app" };
+    process.env = {
+      ...ORIGINAL_ENV,
+      NEXT_PUBLIC_APP_URL: "﻿https://hire-fit-one.vercel.app",
+      QSTASH_URL: "﻿https://qstash.upstash.io",
+    };
     const appUrl = readEnv("NEXT_PUBLIC_APP_URL");
+    const qstashUrl = readEnv("QSTASH_URL");
 
     expect(() => new URL(`${appUrl}/api/process-review`)).not.toThrow();
+    expect(() => new URL(`${qstashUrl}/v2/publish`)).not.toThrow();
   });
 
   test("documents production failure when raw BOM-prefixed tokens reach Fetch headers", () => {

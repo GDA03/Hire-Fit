@@ -8,7 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 import type { ReviewState } from "@/lib/cv-review/types";
 
 const qstashToken = readEnv("QSTASH_TOKEN");
-const qstash = new Client({ token: qstashToken || "" });
+const qstashUrl = readEnv("QSTASH_URL");
+const qstash = new Client({ baseUrl: qstashUrl, token: qstashToken || "" });
 
 async function processReviewInBackground(reviewId: string) {
   const state = await getReviewState(reviewId);
