@@ -1,4 +1,3 @@
-import { localizeList, localizeText } from "@/lib/cv-review/localize";
 import { SECTION_DEFINITIONS, type ReviewLanguage, type SectionResult } from "@/lib/cv-review/types";
 import { RewriteCard } from "./rewrite-card";
 import { ScoreCircle } from "./score-circle";
@@ -80,7 +79,7 @@ export function SectionAccordion({ sections, language }: SectionAccordionProps) 
                     {section.priority}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-slate-600">{localizeText(section.analysis, language)}</p>
+                <p className="mt-1 text-sm text-slate-600">{section.analysis}</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <span className="rounded-full bg-cyan-100 px-3 py-1 text-sm font-black text-cyan-900">{section.score ?? "—"}/100</span>
@@ -91,15 +90,15 @@ export function SectionAccordion({ sections, language }: SectionAccordionProps) 
             <div className="mt-5 grid gap-5 lg:grid-cols-[auto_1fr]">
               <ScoreCircle score={section.score} label={t.sectionScore} size="sm" />
               <div className="grid gap-5 md:grid-cols-2">
-                <ListBlock title={t.whatWorks} items={localizeList(section.whatWorks, language)} />
-                <ListBlock title={t.problemsFound} items={localizeList(section.problemsFound, language)} />
-                <ListBlock title={t.actionPoints} items={localizeList(section.actionPoints, language)} />
+                <ListBlock title={t.whatWorks} items={section.whatWorks} />
+                <ListBlock title={t.problemsFound} items={section.problemsFound} />
+                <ListBlock title={t.actionPoints} items={section.actionPoints} />
                 <div>
                   <h4 className="font-black text-slate-950">{t.whyImportant}</h4>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">{localizeText(section.whyImportant, language)}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{section.whyImportant}</p>
                 </div>
                 <div className="md:col-span-2">
-                  <RewriteCard title={t.rewriteExamples} items={localizeList(section.examples, language)} />
+                  <RewriteCard title={t.rewriteExamples} items={section.examples} />
                 </div>
               </div>
             </div>

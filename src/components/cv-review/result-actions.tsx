@@ -7,6 +7,7 @@ import type { ReviewLanguage } from "@/lib/cv-review/types";
 type ResultActionsProps = {
   language: ReviewLanguage;
   onLanguageChange: (language: ReviewLanguage) => void;
+  translatingLanguage?: ReviewLanguage | null;
 };
 
 const copyText = {
@@ -14,7 +15,7 @@ const copyText = {
   id: "Salin link",
 };
 
-export function ResultActions({ language, onLanguageChange }: ResultActionsProps) {
+export function ResultActions({ language, onLanguageChange, translatingLanguage }: ResultActionsProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -40,17 +41,19 @@ export function ResultActions({ language, onLanguageChange }: ResultActionsProps
       <div className="grid grid-cols-2 rounded-2xl bg-[#F2F0FF] p-1 text-xs font-black">
         <button
           type="button"
+          disabled={Boolean(translatingLanguage)}
           onClick={() => onLanguageChange("en")}
-          className={`rounded-xl px-3 py-2 transition ${language === "en" ? "bg-[#635BFF] text-white shadow-sm" : "text-slate-500 hover:text-[#635BFF]"}`}
+          className={`rounded-xl px-3 py-2 transition disabled:cursor-wait disabled:opacity-70 ${language === "en" ? "bg-[#635BFF] text-white shadow-sm" : "text-slate-500 hover:text-[#635BFF]"}`}
         >
-          EN
+          {translatingLanguage === "en" ? "..." : "EN"}
         </button>
         <button
           type="button"
+          disabled={Boolean(translatingLanguage)}
           onClick={() => onLanguageChange("id")}
-          className={`rounded-xl px-3 py-2 transition ${language === "id" ? "bg-[#635BFF] text-white shadow-sm" : "text-slate-500 hover:text-[#635BFF]"}`}
+          className={`rounded-xl px-3 py-2 transition disabled:cursor-wait disabled:opacity-70 ${language === "id" ? "bg-[#635BFF] text-white shadow-sm" : "text-slate-500 hover:text-[#635BFF]"}`}
         >
-          ID
+          {translatingLanguage === "id" ? "..." : "ID"}
         </button>
       </div>
       <button

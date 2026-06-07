@@ -17,6 +17,7 @@ type ReviewStatusResponse = {
 type FullReviewResponse = ReviewStatusResponse & {
   request?: AnalyzeRequest;
   result?: CVReviewResult;
+  translations?: Partial<Record<ReviewLanguage, CVReviewResult>>;
 };
 
 const reviewSteps = [
@@ -48,6 +49,9 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   const [error, setError] = useState("");
   const [pollCount, setPollCount] = useState(0);
   const [language, setLanguage] = useState<ReviewLanguage>("en");
+  const [resultsByLanguage, setResultsByLanguage] = useState<Partial<Record<ReviewLanguage, CVReviewResult>>>({});
+  const [translationError, setTranslationError] = useState("");
+  const [translatingLanguage, setTranslatingLanguage] = useState<ReviewLanguage | null>(null);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -74,8 +78,13 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         if (statusData.status === "completed") {
           const fullData = await fetchJson<FullReviewResponse>(`/api/cv-reviews/${id}`);
           if (!cancelled) {
+            const originalLanguage = fullData.request?.language ?? "en";
             setReview(fullData);
-            setLanguage(fullData.request?.language ?? "en");
+            setLanguage(originalLanguage);
+            setResultsByLanguage({
+              ...(fullData.result ? { [originalLanguage]: fullData.result } : {}),
+              ...(fullData.translations ?? {}),
+            });
           }
           return;
         }
@@ -100,11 +109,40 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     };
   }, [id]);
 
+  async function handleLanguageChange(nextLanguage: ReviewLanguage) {
+    setTranslationError("");
+
+    if (resultsByLanguage[nextLanguage]) {
+      setLanguage(nextLanguage);
+      return;
+    }
+
+    setTranslatingLanguage(nextLanguage);
+    try {
+      const response = await fetch(`/api/cv-reviews/${id}/translate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: nextLanguage }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Failed to translate review.");
+
+      setResultsByLanguage((current) => ({ ...current, [nextLanguage]: data.result as CVReviewResult }));
+      setLanguage(nextLanguage);
+    } catch (err) {
+      setTranslationError(err instanceof Error ? err.message : "Failed to translate review.");
+    } finally {
+      setTranslatingLanguage(null);
+    }
+  }
+
   const activeStep = useMemo(() => {
     if (review?.status === "queued") return Math.min(1, pollCount);
     if (review?.status === "processing") return Math.min(3, Math.max(1, pollCount));
     return 0;
   }, [pollCount, review?.status]);
+
+  const visibleResult = resultsByLanguage[language] ?? review?.result;
 
   return (
     <main className="min-h-screen overflow-hidden text-slate-950">
@@ -126,12 +164,13 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-700">{language === "id" ? "Hasil review" : "Review result"}</p>
               <h1 className="mt-2 text-3xl font-black md:text-5xl">{language === "id" ? "Analisis CV terstruktur" : "Structured CV analysis"}</h1>
             </div>
-            {review?.status === "completed" && review.result ? (
-              <ResultActions language={language} onLanguageChange={setLanguage} />
+            {review?.status === "completed" && visibleResult ? (
+              <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} />
             ) : review && !error ? (
               <p className="rounded-full bg-cyan-100 px-4 py-2 text-sm font-black text-cyan-800">Status: {review.status}</p>
             ) : null}
           </div>
+          {translationError && <p className="mt-4 text-sm font-bold text-red-600">{translationError}</p>}
 
           <div className="mt-6">
             {error ? (
@@ -140,11 +179,11 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <div className="rounded-3xl border border-red-200 bg-red-50 p-4 font-semibold text-red-700">
                 {review.error ?? "CV review failed. Please try again."}
               </div>
-            ) : review?.status === "completed" && review.result ? (
+            ) : review?.status === "completed" && visibleResult ? (
               <div className="space-y-6">
-                <ResultView result={review.result} language={language} />
+                <ResultView result={visibleResult} language={language} />
                 <div className="flex justify-center pt-2">
-                  <ResultActions language={language} onLanguageChange={setLanguage} />
+                  <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} />
                 </div>
               </div>
             ) : (

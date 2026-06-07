@@ -1,4 +1,3 @@
-import { localizeList, localizeText } from "@/lib/cv-review/localize";
 import type { CVReviewResult, ReviewLanguage } from "@/lib/cv-review/types";
 import { KeywordPanel } from "./keyword-panel";
 import { PriorityPlan } from "./priority-plan";
@@ -23,18 +22,18 @@ function OptionalSection({ title, section, language }: { title: string; section?
         <div className="flex-1 space-y-4">
           <div>
             <h3 className="text-lg font-black text-slate-950">{title}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{localizeText(section.analysis, language)}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{section.analysis}</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-3xl border border-cyan-100 bg-cyan-50/70 p-4">
               <h4 className="font-black text-cyan-900">{t.actionPoints}</h4>
               <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
-                {localizeList(section.actionPoints, language).map((item, index) => (
+                {section.actionPoints.map((item, index) => (
                   <li key={`${title}-action-${index}`}>• {item}</li>
                 ))}
               </ul>
             </div>
-            <RewriteCard title={language === "id" ? "Contoh" : "Examples"} items={localizeList(section.examples, language)} />
+            <RewriteCard title={language === "id" ? "Contoh" : "Examples"} items={section.examples} />
           </div>
         </div>
       </div>
@@ -87,13 +86,13 @@ export function ResultView({ result, language }: ResultViewProps) {
         <div className="result-motion-card space-y-4 rounded-[1.75rem] border border-white/80 bg-white/75 p-6 shadow-xl shadow-slate-900/5 backdrop-blur" style={{ animationDelay: "80ms" }}>
           <div>
             <h3 className="text-xl font-black text-slate-950">{t.summary}</h3>
-            <p className="mt-3 leading-7 text-slate-600">{localizeText(result.summary, language)}</p>
+            <p className="mt-3 leading-7 text-slate-600">{result.summary}</p>
           </div>
           {result.atsWarnings.length > 0 && (
             <div className="rounded-3xl border border-amber-200 bg-amber-50/80 p-4 shadow-inner shadow-amber-100/60">
               <h4 className="font-black text-amber-900">{t.atsWarnings}</h4>
               <ul className="mt-2 space-y-2 text-sm leading-6 text-amber-900/80">
-                {localizeList(result.atsWarnings, language).map((warning, index) => (
+                {result.atsWarnings.map((warning, index) => (
                   <li key={`ats-${index}`}>• {warning}</li>
                 ))}
               </ul>
@@ -102,17 +101,17 @@ export function ResultView({ result, language }: ResultViewProps) {
         </div>
       </div>
 
-      <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan title={t.priorityPlan} items={localizeList(result.priorityPlan, language)} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan title={t.priorityPlan} items={result.priorityPlan} /></div>
       <div className="result-motion-card" style={{ animationDelay: "200ms" }}><SectionAccordion sections={result.sections} language={language} /></div>
       <div className="result-motion-card" style={{ animationDelay: "260ms" }}><KeywordPanel keywords={result.keywords} language={language} /></div>
 
       <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white via-cyan-50/70 to-pink-50/70 p-5 shadow-xl shadow-slate-900/5" style={{ animationDelay: "320ms" }}>
         <h3 className="text-lg font-black text-slate-950">{t.careerRecommendations}</h3>
-        <p className="mt-3 text-sm leading-6 text-slate-600">{localizeText(result.careerRecommendation.summary, language)}</p>
+        <p className="mt-3 text-sm leading-6 text-slate-600">{result.careerRecommendation.summary}</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-          <RecommendationList title={t.recommendedRoles} items={localizeList(result.careerRecommendation.recommendedRoles, language)} emptyText={t.noItems} />
-          <RecommendationList title={t.recommendedIndustries} items={localizeList(result.careerRecommendation.recommendedIndustries, language)} emptyText={t.noItems} />
-          <RecommendationList title={t.nextSteps} items={localizeList(result.careerRecommendation.nextSteps, language)} emptyText={t.noItems} />
+          <RecommendationList title={t.recommendedRoles} items={result.careerRecommendation.recommendedRoles} emptyText={t.noItems} />
+          <RecommendationList title={t.recommendedIndustries} items={result.careerRecommendation.recommendedIndustries} emptyText={t.noItems} />
+          <RecommendationList title={t.nextSteps} items={result.careerRecommendation.nextSteps} emptyText={t.noItems} />
         </div>
       </div>
 

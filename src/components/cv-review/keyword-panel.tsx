@@ -1,4 +1,3 @@
-import { localizeList } from "@/lib/cv-review/localize";
 import type { KeywordResult, ReviewLanguage } from "@/lib/cv-review/types";
 
 type KeywordPanelProps = {
@@ -21,7 +20,7 @@ export function KeywordPanel({ keywords, language }: KeywordPanelProps) {
       <h3 className="text-lg font-black text-slate-950">{language === "id" ? "Analisis keyword" : "Keyword analysis"}</h3>
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         {groups.map(({ key, title }) => {
-          const items = localizeList(keywords[key], language);
+          const items = keywords[key];
           const isMissing = key === "missingKeywords";
 
           return (
