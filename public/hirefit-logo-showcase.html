@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireFit — Logo Design Exploration</title>
+  <style>
+    :root { --ink:#17152F; --primary:#635BFF; --teal:#14B8A6; --violet:#A78BFA; --paper:#F8F7FF; --card:#FFFFFF; --soft:#F2F0FF; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 15% 0%, rgba(99,91,255,.16), transparent 34%), radial-gradient(circle at 85% 15%, rgba(20,184,166,.14), transparent 32%), linear-gradient(135deg,#F8F7FF 0%,#F4F1FF 48%,#EEFDF7 100%); color:var(--ink); }
+    main { max-width:1180px; margin:0 auto; padding:72px 24px; }
+    header { text-align:center; margin-bottom:52px; }
+    h1 { margin:0; font-size:clamp(48px,8vw,92px); letter-spacing:-.08em; line-height:.9; }
+    .tagline { margin:18px auto 0; max-width:720px; color:rgba(23,21,47,.68); font-weight:800; text-transform:uppercase; letter-spacing:.16em; font-size:12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:24px; }
+    .card { background:rgba(255,255,255,.82); border:1px solid rgba(99,91,255,.15); border-radius:32px; padding:28px; box-shadow:0 20px 60px rgba(23,21,47,.08); transition:transform .25s ease, box-shadow .25s ease; backdrop-filter: blur(16px); }
+    .card:hover { transform:translateY(-6px); box-shadow:0 30px 80px rgba(99,91,255,.16); }
+    .canvas { height:220px; display:grid; place-items:center; border-radius:28px; background:linear-gradient(145deg,#fff,#F2F0FF); color:var(--primary); margin-bottom:22px; position:relative; overflow:hidden; }
+    .canvas::after { content:""; position:absolute; width:180px; height:180px; border-radius:999px; background:radial-gradient(circle, rgba(20,184,166,.14), transparent 68%); right:-54px; top:-50px; }
+    svg { width:128px; height:128px; position:relative; z-index:1; }
+    h2 { margin:0 0 6px; font-size:18px; letter-spacing:-.03em; }
+    .type { margin:0 0 14px; color:var(--primary); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; }
+    p { margin:0; color:rgba(23,21,47,.72); line-height:1.65; font-weight:600; }
+    .swatches { display:flex; gap:10px; justify-content:center; margin-top:28px; }
+    .swatch { width:34px; height:34px; border-radius:12px; box-shadow:0 4px 0 rgba(23,21,47,.12); }
+    footer { margin-top:44px; text-align:center; color:rgba(23,21,47,.48); font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>HireFit</h1>
+    <p class="tagline">AI CV review · growth career · modern SaaS logo directions using existing palette</p>
+    <div class="swatches" aria-label="Existing HireFit palette">
+      <span class="swatch" style="background:#635BFF"></span><span class="swatch" style="background:#14B8A6"></span><span class="swatch" style="background:#A78BFA"></span><span class="swatch" style="background:#17152F"></span><span class="swatch" style="background:#F8F7FF"></span>
+    </div>
+  </header>
+  <section class="grid">
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 23h28c12 0 21 8 21 19s-9 19-21 19H41v16H30V23Z" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/><path d="M41 35h17c5 0 9 3 9 7s-4 7-9 7H41V35Z" fill="currentColor" opacity=".18"/><path d="M31 76c15-3 27-11 38-26" stroke="#14B8A6" stroke-width="5" stroke-linecap="round"/><circle cx="69" cy="50" r="5" fill="#14B8A6"/></svg></div><h2>Fit Loop</h2><p class="type">Pure geometric</p><p>Abstract H/F monogram with upward career path. Strong app-icon shape, simple enough for favicon.</p></article>
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><rect x="28" y="21" width="13" height="13" rx="4"/><rect x="28" y="38" width="13" height="13" rx="4"/><rect x="28" y="55" width="13" height="13" rx="4"/><rect x="28" y="72" width="13" height="13" rx="4"/><rect x="45" y="21" width="13" height="13" rx="4" opacity=".72"/><rect x="45" y="38" width="13" height="13" rx="4"/><rect x="45" y="55" width="13" height="13" rx="4" opacity=".72"/><rect x="62" y="21" width="13" height="13" rx="4" opacity=".42"/><rect x="62" y="38" width="13" height="13" rx="4"/><rect x="62" y="55" width="13" height="13" rx="4" fill="#14B8A6"/><rect x="62" y="72" width="13" height="13" rx="4" fill="#14B8A6"/></g></svg></div><h2>Resume Matrix</h2><p class="type">Dot matrix</p><p>CV sections become rounded modules. Teal blocks show improvements found by AI review.</p></article>
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23 64c9-20 21-30 36-30 8 0 14 3 18 8" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M24 74c12-8 25-12 38-12 8 0 14 1 18 3" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".35"/><path d="M60 34h18v18" stroke="#14B8A6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="23" cy="64" r="5" fill="currentColor"/><circle cx="59" cy="34" r="5" fill="currentColor"/><circle cx="78" cy="52" r="5" fill="#14B8A6"/></svg></div><h2>Career Signal</h2><p class="type">Line system</p><p>Growth curve plus signal trails. Feels dynamic, human, and AI-native without visual clutter.</p></article>
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="hf-doc"><path d="M31 18h31l14 14v50a5 5 0 0 1-5 5H31a5 5 0 0 1-5-5V23a5 5 0 0 1 5-5Z"/></clipPath></defs><path d="M31 18h31l14 14v50a5 5 0 0 1-5 5H31a5 5 0 0 1-5-5V23a5 5 0 0 1 5-5Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><g clip-path="url(#hf-doc)" fill="currentColor"><circle cx="39" cy="38" r="3"/><circle cx="51" cy="38" r="3"/><circle cx="63" cy="38" r="3"/><circle cx="39" cy="50" r="3" opacity=".45"/><circle cx="51" cy="50" r="3"/><circle cx="63" cy="50" r="3" opacity=".45"/><circle cx="39" cy="62" r="3"/><circle cx="51" cy="62" r="3"/><circle cx="63" cy="62" r="3" fill="#14B8A6"/><circle cx="51" cy="74" r="3"/><circle cx="63" cy="74" r="3" fill="#14B8A6"/></g></svg></div><h2>CV Intelligence</h2><p class="type">Dots + geometry</p><p>Document outline with scored insight grid. Most literal direction for AI CV review.</p></article>
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="20" width="50" height="60" rx="12" stroke="currentColor" stroke-width="4"/><path d="M36 38h28M36 50h20M36 62h13" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".55"/><path d="M57 66l8 8 17-21" stroke="#14B8A6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="65" cy="74" r="5" fill="#14B8A6" opacity=".2"/></svg></div><h2>Verified Fit</h2><p class="type">Lines + geometry</p><p>CV card plus confident checkmark. Best for trust, review quality, and clear product meaning.</p></article>
+    <article class="card"><div class="canvas"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-linecap="round"><path d="M30 70Q45 61 50 50" stroke-width="3"/><path d="M50 50Q58 39 72 30" stroke-width="3"/><path d="M37 34Q45 43 50 50" stroke-width="2" opacity=".45"/><path d="M50 50Q64 54 73 65" stroke-width="2" opacity=".35"/></g><circle cx="30" cy="70" r="7" fill="currentColor"/><circle cx="50" cy="50" r="8" fill="currentColor"/><circle cx="72" cy="30" r="7" fill="#14B8A6"/><circle cx="37" cy="34" r="4" fill="currentColor" opacity=".4"/><circle cx="73" cy="65" r="4" fill="#A78BFA"/></svg></div><h2>Fit Graph</h2><p class="type">Node network</p><p>Candidate, CV, and career target connected as graph. Strong AI matching metaphor.</p></article>
+  </section>
+  <footer>Pick 1-2 variants for refinement. SVG files generated separately in /public.</footer>
+</main>
+</body>
+</html>
