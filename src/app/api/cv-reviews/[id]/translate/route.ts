@@ -3,6 +3,8 @@ import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
 import { translateReviewResult } from "@/lib/cv-review/translation";
 import type { ReviewLanguage } from "@/lib/cv-review/types";
 
+export const maxDuration = 60;
+
 function readLanguage(value: unknown): ReviewLanguage | null {
   return value === "en" || value === "id" ? value : null;
 }

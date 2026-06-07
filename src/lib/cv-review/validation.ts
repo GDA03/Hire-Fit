@@ -48,13 +48,44 @@ export function validateAnalyzeRequest(input: unknown): AnalyzeRequest {
 
 export function extractJsonObject(text: string) {
   const first = text.indexOf("{");
-  const last = text.lastIndexOf("}");
 
-  if (first === -1 || last === -1 || last <= first) {
+  if (first === -1) {
     throw new Error("Model response did not contain a JSON object.");
   }
 
-  return JSON.parse(text.slice(first, last + 1));
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = first; index < text.length; index += 1) {
+    const char = text[index];
+
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+
+    if (char === "\\" && inString) {
+      escaped = true;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) continue;
+
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+
+    if (depth === 0) {
+      return JSON.parse(text.slice(first, index + 1));
+    }
+  }
+
+  throw new Error("Model response did not contain a complete JSON object.");
 }
 
 export function scoreTone(score: number | null) {

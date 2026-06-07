@@ -43,6 +43,24 @@ const reviewSteps = [
   },
 ];
 
+const translationSteps = [
+  {
+    label: "Preparing translation",
+    detail: "Mengambil hasil review yang sudah selesai tanpa review ulang CV.",
+    icon: "🗂️",
+  },
+  {
+    label: "Translating review content",
+    detail: "AI menerjemahkan teks saja. Score, prioritas, dan urutan tetap sama.",
+    icon: "🌐",
+  },
+  {
+    label: "Saving cached result",
+    detail: "Hasil terjemahan disimpan supaya toggle berikutnya instan dan tidak boros token.",
+    icon: "💾",
+  },
+];
+
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [review, setReview] = useState<FullReviewResponse | null>(null);
@@ -179,6 +197,8 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <div className="rounded-3xl border border-red-200 bg-red-50 p-4 font-semibold text-red-700">
                 {review.error ?? "CV review failed. Please try again."}
               </div>
+            ) : translatingLanguage ? (
+              <TranslationWaiting targetLanguage={translatingLanguage} />
             ) : review?.status === "completed" && visibleResult ? (
               <div className="space-y-6">
                 <ResultView result={visibleResult} language={language} />
@@ -209,6 +229,52 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
       </footer>
     </main>
+  );
+}
+
+function TranslationWaiting({ targetLanguage }: { targetLanguage: ReviewLanguage }) {
+  const targetLabel = targetLanguage === "id" ? "Bahasa Indonesia" : "English";
+
+  return (
+    <div className="overflow-hidden rounded-[2rem] border border-indigo-100 bg-gradient-to-br from-[#F2F0FF] via-white to-cyan-50 p-6 text-slate-950 shadow-inner md:p-8">
+      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div className="text-center lg:text-left">
+          <div className="relative mx-auto mb-6 h-32 w-32 lg:mx-0">
+            <div className="absolute inset-0 rounded-[2rem] bg-[#17152F] shadow-2xl shadow-indigo-900/20 animate-floaty" />
+            <div className="absolute inset-3 grid place-items-center rounded-[1.5rem] bg-white text-5xl">🌐</div>
+            <span className="absolute -right-2 top-5 h-6 w-6 rounded-full bg-[#635BFF] animate-orbit" />
+            <span className="absolute bottom-3 left-0 h-5 w-5 rounded-full bg-teal-400 animate-orbit" style={{ animationDuration: "7s" }} />
+          </div>
+          <h2 className="text-3xl font-black">Translating to {targetLabel}</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Tunggu sebentar. Ini cuma translate hasil review yang sudah ada, bukan review ulang CV.
+          </p>
+          <div className="mt-6 overflow-hidden rounded-full bg-white shadow-inner">
+            <div className="h-3 w-2/3 rounded-full bg-gradient-to-r from-[#635BFF] via-cyan-400 to-teal-400 transition-all duration-700 ease-out animate-result-pulse" />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {translationSteps.map((step, index) => (
+            <div
+              key={step.label}
+              className={`animate-pop-in flex gap-4 rounded-3xl border p-4 transition duration-300 ${
+                index === 1 ? "border-indigo-300 bg-white shadow-xl shadow-indigo-900/10" : "border-white bg-white/60"
+              }`}
+              style={{ animationDelay: `${index * 90}ms` }}
+            >
+              <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-xl ${index === 1 ? "bg-[#17152F] text-white animate-floaty" : "bg-slate-100"}`}>
+                {step.icon}
+              </div>
+              <div>
+                <h3 className="font-black text-slate-950">{step.label}</h3>
+                <p className="mt-1 text-sm leading-6 text-slate-600">{step.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
