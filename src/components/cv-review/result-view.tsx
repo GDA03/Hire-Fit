@@ -1,4 +1,5 @@
-import { CVReviewResult } from "@/lib/cv-review/types";
+import { localizeList, localizeText } from "@/lib/cv-review/localize";
+import type { CVReviewResult, ReviewLanguage } from "@/lib/cv-review/types";
 import { KeywordPanel } from "./keyword-panel";
 import { PriorityPlan } from "./priority-plan";
 import { RewriteCard } from "./rewrite-card";
@@ -7,10 +8,13 @@ import { SectionAccordion } from "./section-accordion";
 
 type ResultViewProps = {
   result: CVReviewResult;
+  language: ReviewLanguage;
 };
 
-function OptionalSection({ title, section }: { title: string; section?: CVReviewResult["jobFit"] }) {
+function OptionalSection({ title, section, language }: { title: string; section?: CVReviewResult["jobFit"]; language: ReviewLanguage }) {
   if (!section) return null;
+
+  const t = copy[language];
 
   return (
     <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-xl shadow-slate-900/5 backdrop-blur">
@@ -19,18 +23,18 @@ function OptionalSection({ title, section }: { title: string; section?: CVReview
         <div className="flex-1 space-y-4">
           <div>
             <h3 className="text-lg font-black text-slate-950">{title}</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{section.analysis}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{localizeText(section.analysis, language)}</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-3xl border border-cyan-100 bg-cyan-50/70 p-4">
-              <h4 className="font-black text-cyan-900">Action points</h4>
+              <h4 className="font-black text-cyan-900">{t.actionPoints}</h4>
               <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
-                {section.actionPoints.map((item, index) => (
+                {localizeList(section.actionPoints, language).map((item, index) => (
                   <li key={`${title}-action-${index}`}>• {item}</li>
                 ))}
               </ul>
             </div>
-            <RewriteCard title="Examples" items={section.examples} />
+            <RewriteCard title={language === "id" ? "Contoh" : "Examples"} items={localizeList(section.examples, language)} />
           </div>
         </div>
       </div>
@@ -38,23 +42,58 @@ function OptionalSection({ title, section }: { title: string; section?: CVReview
   );
 }
 
-export function ResultView({ result }: ResultViewProps) {
+const copy = {
+  en: {
+    overallScore: "Overall score",
+    summary: "Summary",
+    atsWarnings: "ATS warnings",
+    priorityPlan: "Priority action plan",
+    careerRecommendations: "Career recommendations",
+    recommendedRoles: "Recommended roles",
+    recommendedIndustries: "Recommended industries",
+    nextSteps: "Next steps",
+    noItems: "No items returned.",
+    jobFit: "Job fit",
+    tailoredContent: "Tailored content",
+    experienceMatch: "Experience match",
+    actionPoints: "Action points",
+  },
+  id: {
+    overallScore: "Skor keseluruhan",
+    summary: "Ringkasan",
+    atsWarnings: "Peringatan ATS",
+    priorityPlan: "Rencana prioritas",
+    careerRecommendations: "Rekomendasi karier",
+    recommendedRoles: "Rekomendasi role",
+    recommendedIndustries: "Rekomendasi industri",
+    nextSteps: "Langkah berikutnya",
+    noItems: "Tidak ada item.",
+    jobFit: "Kecocokan role",
+    tailoredContent: "Konten yang disesuaikan",
+    experienceMatch: "Kecocokan pengalaman",
+    actionPoints: "Poin aksi",
+  },
+};
+
+export function ResultView({ result, language }: ResultViewProps) {
+  const t = copy[language];
+
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
         <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-cyan-50 via-white to-pink-50 p-6 shadow-xl shadow-cyan-900/5">
-          <ScoreCircle score={result.overallScore} label="Overall score" />
+          <ScoreCircle score={result.overallScore} label={t.overallScore} />
         </div>
         <div className="result-motion-card space-y-4 rounded-[1.75rem] border border-white/80 bg-white/75 p-6 shadow-xl shadow-slate-900/5 backdrop-blur" style={{ animationDelay: "80ms" }}>
           <div>
-            <h3 className="text-xl font-black text-slate-950">Summary</h3>
-            <p className="mt-3 leading-7 text-slate-600">{result.summary}</p>
+            <h3 className="text-xl font-black text-slate-950">{t.summary}</h3>
+            <p className="mt-3 leading-7 text-slate-600">{localizeText(result.summary, language)}</p>
           </div>
           {result.atsWarnings.length > 0 && (
             <div className="rounded-3xl border border-amber-200 bg-amber-50/80 p-4 shadow-inner shadow-amber-100/60">
-              <h4 className="font-black text-amber-900">ATS warnings</h4>
+              <h4 className="font-black text-amber-900">{t.atsWarnings}</h4>
               <ul className="mt-2 space-y-2 text-sm leading-6 text-amber-900/80">
-                {result.atsWarnings.map((warning, index) => (
+                {localizeList(result.atsWarnings, language).map((warning, index) => (
                   <li key={`ats-${index}`}>• {warning}</li>
                 ))}
               </ul>
@@ -63,28 +102,28 @@ export function ResultView({ result }: ResultViewProps) {
         </div>
       </div>
 
-      <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan items={result.priorityPlan} /></div>
-      <div className="result-motion-card" style={{ animationDelay: "200ms" }}><SectionAccordion sections={result.sections} /></div>
-      <div className="result-motion-card" style={{ animationDelay: "260ms" }}><KeywordPanel keywords={result.keywords} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan title={t.priorityPlan} items={localizeList(result.priorityPlan, language)} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "200ms" }}><SectionAccordion sections={result.sections} language={language} /></div>
+      <div className="result-motion-card" style={{ animationDelay: "260ms" }}><KeywordPanel keywords={result.keywords} language={language} /></div>
 
       <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white via-cyan-50/70 to-pink-50/70 p-5 shadow-xl shadow-slate-900/5" style={{ animationDelay: "320ms" }}>
-        <h3 className="text-lg font-black text-slate-950">Career recommendations</h3>
-        <p className="mt-3 text-sm leading-6 text-slate-600">{result.careerRecommendation.summary}</p>
+        <h3 className="text-lg font-black text-slate-950">{t.careerRecommendations}</h3>
+        <p className="mt-3 text-sm leading-6 text-slate-600">{localizeText(result.careerRecommendation.summary, language)}</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-          <RecommendationList title="Recommended roles" items={result.careerRecommendation.recommendedRoles} />
-          <RecommendationList title="Recommended industries" items={result.careerRecommendation.recommendedIndustries} />
-          <RecommendationList title="Next steps" items={result.careerRecommendation.nextSteps} />
+          <RecommendationList title={t.recommendedRoles} items={localizeList(result.careerRecommendation.recommendedRoles, language)} emptyText={t.noItems} />
+          <RecommendationList title={t.recommendedIndustries} items={localizeList(result.careerRecommendation.recommendedIndustries, language)} emptyText={t.noItems} />
+          <RecommendationList title={t.nextSteps} items={localizeList(result.careerRecommendation.nextSteps, language)} emptyText={t.noItems} />
         </div>
       </div>
 
-      <OptionalSection title="Job fit" section={result.jobFit} />
-      <OptionalSection title="Tailored content" section={result.tailoredContent} />
-      <OptionalSection title="Experience match" section={result.experienceMatch} />
+      <OptionalSection title={t.jobFit} section={result.jobFit} language={language} />
+      <OptionalSection title={t.tailoredContent} section={result.tailoredContent} language={language} />
+      <OptionalSection title={t.experienceMatch} section={result.experienceMatch} language={language} />
     </div>
   );
 }
 
-function RecommendationList({ title, items }: { title: string; items: string[] }) {
+function RecommendationList({ title, items, emptyText }: { title: string; items: string[]; emptyText: string }) {
   return (
     <div className="rounded-3xl border border-white/80 bg-white/70 p-4 shadow-sm shadow-slate-900/5">
       <h4 className="font-black text-cyan-900">{title}</h4>
@@ -95,7 +134,7 @@ function RecommendationList({ title, items }: { title: string; items: string[] }
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-sm text-slate-500">No items returned.</p>
+        <p className="mt-2 text-sm text-slate-500">{emptyText}</p>
       )}
     </div>
   );

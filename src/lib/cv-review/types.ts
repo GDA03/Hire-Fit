@@ -24,38 +24,40 @@ export type AnalyzeRequest = {
   scholarshipTitle?: string;
 };
 
+export type LocalizedText = string | { en: string; id: string };
+
 export type SectionResult = {
   score: number | null;
-  analysis: string;
-  whatWorks: string[];
-  problemsFound: string[];
-  actionPoints: string[];
-  whyImportant: string;
-  examples: string[];
+  analysis: LocalizedText;
+  whatWorks: LocalizedText[];
+  problemsFound: LocalizedText[];
+  actionPoints: LocalizedText[];
+  whyImportant: LocalizedText;
+  examples: LocalizedText[];
   priority: SectionPriority;
 };
 
 export type KeywordResult = {
-  jobTitles: string[];
-  skills: string[];
-  careerPaths: string[];
-  professionalSummaryKeywords: string[];
-  additionalKeywords: string[];
-  missingKeywords: string[];
+  jobTitles: LocalizedText[];
+  skills: LocalizedText[];
+  careerPaths: LocalizedText[];
+  professionalSummaryKeywords: LocalizedText[];
+  additionalKeywords: LocalizedText[];
+  missingKeywords: LocalizedText[];
 };
 
 export type CareerRecommendationResult = {
-  summary: string;
-  recommendedRoles: string[];
-  recommendedIndustries: string[];
-  nextSteps: string[];
+  summary: LocalizedText;
+  recommendedRoles: LocalizedText[];
+  recommendedIndustries: LocalizedText[];
+  nextSteps: LocalizedText[];
 };
 
 export type CVReviewResult = {
   overallScore: number;
-  summary: string;
-  atsWarnings: string[];
-  priorityPlan: string[];
+  summary: LocalizedText;
+  atsWarnings: LocalizedText[];
+  priorityPlan: LocalizedText[];
   sections: Record<SectionKey, SectionResult>;
   keywords: KeywordResult;
   careerRecommendation: CareerRecommendationResult;

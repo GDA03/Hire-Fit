@@ -1,11 +1,12 @@
 type PriorityPlanProps = {
+  title: string;
   items: string[];
 };
 
-export function PriorityPlan({ items }: PriorityPlanProps) {
+export function PriorityPlan({ title, items }: PriorityPlanProps) {
   return (
     <div className="rounded-[1.75rem] border border-white/80 bg-white/75 p-5 shadow-xl shadow-slate-900/5 backdrop-blur">
-      <h3 className="text-lg font-black text-slate-950">Priority action plan</h3>
+      <h3 className="text-lg font-black text-slate-950">{title}</h3>
       {items.length > 0 ? (
         <ol className="mt-4 space-y-3">
           {items.map((item, index) => (

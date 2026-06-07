@@ -1,9 +1,10 @@
 "use client";
 
 import { use, useEffect, useMemo, useState } from "react";
+import { ResultActions } from "@/components/cv-review/result-actions";
 import { ResultView } from "@/components/cv-review";
 import { BrandLink } from "@/components/site-brand";
-import type { CVReviewResult } from "@/lib/cv-review/types";
+import type { AnalyzeRequest, CVReviewResult, ReviewLanguage } from "@/lib/cv-review/types";
 
 type ReviewStatus = "queued" | "processing" | "completed" | "failed";
 
@@ -14,6 +15,7 @@ type ReviewStatusResponse = {
 };
 
 type FullReviewResponse = ReviewStatusResponse & {
+  request?: AnalyzeRequest;
   result?: CVReviewResult;
 };
 
@@ -45,6 +47,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   const [review, setReview] = useState<FullReviewResponse | null>(null);
   const [error, setError] = useState("");
   const [pollCount, setPollCount] = useState(0);
+  const [language, setLanguage] = useState<ReviewLanguage>("en");
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -70,7 +73,10 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
         if (statusData.status === "completed") {
           const fullData = await fetchJson<FullReviewResponse>(`/api/cv-reviews/${id}`);
-          if (!cancelled) setReview(fullData);
+          if (!cancelled) {
+            setReview(fullData);
+            setLanguage(fullData.request?.language ?? "en");
+          }
           return;
         }
 
@@ -115,14 +121,16 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         <div className="pointer-events-none absolute left-1/3 top-8 h-28 w-28 rounded-full bg-[#635BFF]/15 blur-3xl animate-result-pulse" />
 
         <div className="relative rounded-[2.25rem] border border-white/80 bg-white/75 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur md:p-8">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-700">Review result</p>
-              <h1 className="mt-2 text-3xl font-black md:text-5xl">Structured CV analysis</h1>
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-700">{language === "id" ? "Hasil review" : "Review result"}</p>
+              <h1 className="mt-2 text-3xl font-black md:text-5xl">{language === "id" ? "Analisis CV terstruktur" : "Structured CV analysis"}</h1>
             </div>
-            {review && review.status !== "completed" && !error && (
+            {review?.status === "completed" && review.result ? (
+              <ResultActions language={language} onLanguageChange={setLanguage} />
+            ) : review && !error ? (
               <p className="rounded-full bg-cyan-100 px-4 py-2 text-sm font-black text-cyan-800">Status: {review.status}</p>
-            )}
+            ) : null}
           </div>
 
           <div className="mt-6">
@@ -133,7 +141,12 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 {review.error ?? "CV review failed. Please try again."}
               </div>
             ) : review?.status === "completed" && review.result ? (
-              <ResultView result={review.result} />
+              <div className="space-y-6">
+                <ResultView result={review.result} language={language} />
+                <div className="flex justify-center pt-2">
+                  <ResultActions language={language} onLanguageChange={setLanguage} />
+                </div>
+              </div>
             ) : (
               <ReviewWaiting activeStep={activeStep} />
             )}

@@ -1,12 +1,15 @@
 import type { AnalyzeRequest } from "./types";
 
+const localizedTextShape = `{ "en": "English text", "id": "Bahasa Indonesia text" }`;
+
+const sectionShape = `{ "score": 0, "analysis": ${localizedTextShape}, "whatWorks": [${localizedTextShape}], "problemsFound": [${localizedTextShape}], "actionPoints": [${localizedTextShape}], "whyImportant": ${localizedTextShape}, "examples": [${localizedTextShape}], "priority": "high" }`;
+
 const targetedSectionShape = `,
-  "jobFit": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-  "tailoredContent": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-  "experienceMatch": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" }`;
+  "jobFit": ${sectionShape},
+  "tailoredContent": ${sectionShape},
+  "experienceMatch": ${sectionShape}`;
 
 export function buildCVReviewPrompt(request: AnalyzeRequest) {
-  const languageName = request.language === "id" ? "Bahasa Indonesia" : "English";
   const hasJobTarget = Boolean(request.jobRole || request.jobDescription);
   const targetedSectionRule = hasJobTarget
     ? "- Include jobFit, tailoredContent, and experienceMatch because a target role or job description exists."
@@ -16,7 +19,9 @@ export function buildCVReviewPrompt(request: AnalyzeRequest) {
   return `You are HireFit's expert ATS resume reviewer and recruiter coach.
 Analyze the CV for ATS readiness, recruiter readability, and practical improvement.
 
-Output language: ${languageName}.
+Output bilingual JSON. Every user-facing text field must be an object with both languages: { "en": "English text", "id": "Bahasa Indonesia text" }.
+Do not run separate reviews per language. Use the same analysis, scores, priorities, and examples for both languages.
+Default requested language: ${request.language}.
 Review purpose: ${request.purpose}.
 Target role: ${request.jobRole ?? "Not provided"}.
 Scholarship title: ${request.scholarshipTitle ?? "Not provided"}.
@@ -24,6 +29,7 @@ Job description provided: ${request.jobDescription ? "Yes" : "No"}.
 
 Rules:
 - Return valid JSON only. No markdown. No code fences.
+- Every analysis, warning, list item, keyword, recommendation, and example must include both "en" and "id" values in one response.
 - Never fabricate experience, skills, metrics, employers, education, or credentials.
 - Example rewrites must only use facts present in the CV.
 - Scores must be integers from 0 to 100. Use null only if a section is truly not applicable.
@@ -36,34 +42,34 @@ ${targetedSectionRule}
 Return this exact JSON shape:
 {
   "overallScore": 0,
-  "summary": "string",
-  "atsWarnings": ["string"],
-  "priorityPlan": ["string", "string", "string", "string", "string"],
+  "summary": ${localizedTextShape},
+  "atsWarnings": [${localizedTextShape}],
+  "priorityPlan": [${localizedTextShape}, ${localizedTextShape}, ${localizedTextShape}, ${localizedTextShape}, ${localizedTextShape}],
   "sections": {
-    "overallImpression": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-    "contactInformation": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-    "relevantSkills": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-    "professionalSummary": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "medium" },
-    "workExperience": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-    "achievements": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "high" },
-    "educationCertification": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "medium" },
-    "organizationalActivity": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "low" },
-    "writingConsistency": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "medium" },
-    "additionalSection": { "score": 0, "analysis": "string", "whatWorks": ["string"], "problemsFound": ["string"], "actionPoints": ["string"], "whyImportant": "string", "examples": ["string"], "priority": "low" }
+    "overallImpression": ${sectionShape},
+    "contactInformation": ${sectionShape},
+    "relevantSkills": ${sectionShape},
+    "professionalSummary": ${sectionShape},
+    "workExperience": ${sectionShape},
+    "achievements": ${sectionShape},
+    "educationCertification": ${sectionShape},
+    "organizationalActivity": ${sectionShape},
+    "writingConsistency": ${sectionShape},
+    "additionalSection": ${sectionShape}
   },
   "keywords": {
-    "jobTitles": ["string"],
-    "skills": ["string"],
-    "careerPaths": ["string"],
-    "professionalSummaryKeywords": ["string"],
-    "additionalKeywords": ["string"],
-    "missingKeywords": ["string"]
+    "jobTitles": [${localizedTextShape}],
+    "skills": [${localizedTextShape}],
+    "careerPaths": [${localizedTextShape}],
+    "professionalSummaryKeywords": [${localizedTextShape}],
+    "additionalKeywords": [${localizedTextShape}],
+    "missingKeywords": [${localizedTextShape}]
   },
   "careerRecommendation": {
-    "summary": "string",
-    "recommendedRoles": ["string"],
-    "recommendedIndustries": ["string"],
-    "nextSteps": ["string"]
+    "summary": ${localizedTextShape},
+    "recommendedRoles": [${localizedTextShape}],
+    "recommendedIndustries": [${localizedTextShape}],
+    "nextSteps": [${localizedTextShape}]
   }${targetedSections}
 }
 
