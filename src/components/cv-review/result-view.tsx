@@ -4,7 +4,7 @@ import { PriorityPlan } from "./priority-plan";
 import { RewriteCard } from "./rewrite-card";
 import { ScoreCircle } from "./score-circle";
 import { SectionAccordion } from "./section-accordion";
-
+import { CVModificationGuide } from "./cv-modification-guide";
 type ResultViewProps = {
   result: CVReviewResult;
   language: ReviewLanguage;
@@ -104,7 +104,7 @@ export function ResultView({ result, language }: ResultViewProps) {
       <div className="result-motion-card" style={{ animationDelay: "140ms" }}><PriorityPlan title={t.priorityPlan} items={result.priorityPlan} /></div>
       <div className="result-motion-card" style={{ animationDelay: "200ms" }}><SectionAccordion sections={result.sections} language={language} /></div>
       <div className="result-motion-card" style={{ animationDelay: "260ms" }}><KeywordPanel keywords={result.keywords} language={language} /></div>
-
+      <div className="result-motion-card" style={{ animationDelay: "290ms" }}><CVModificationGuide result={result} language={language} /></div>
       <div className="result-motion-card rounded-[1.75rem] border border-white/80 bg-gradient-to-br from-white via-cyan-50/70 to-pink-50/70 p-5 shadow-xl shadow-slate-900/5" style={{ animationDelay: "320ms" }}>
         <h3 className="text-lg font-black text-slate-950">{t.careerRecommendations}</h3>
         <p className="mt-3 text-sm leading-6 text-slate-600">{result.careerRecommendation.summary}</p>

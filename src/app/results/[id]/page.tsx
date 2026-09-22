@@ -197,12 +197,19 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
       </nav>
 
-      <section className="relative mx-auto max-w-6xl px-6 py-10">
+      <section className="relative mx-auto max-w-6xl px-6 py-10 print:max-w-none print:px-0 print:py-0">
         <div className="pointer-events-none absolute -left-10 top-20 h-44 w-44 rounded-full bg-cyan-300/30 blur-3xl animate-blob-drift" />
         <div className="pointer-events-none absolute right-8 top-36 h-40 w-40 rounded-full bg-pink-300/30 blur-3xl animate-blob-drift" />
         <div className="pointer-events-none absolute left-1/3 top-8 h-28 w-28 rounded-full bg-[#635BFF]/15 blur-3xl animate-result-pulse" />
 
-        <div className="relative rounded-[2.25rem] border border-white/80 bg-white/75 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur md:p-8">
+        <div className="relative rounded-[2.25rem] border border-white/80 bg-white/75 p-5 shadow-2xl shadow-slate-900/10 backdrop-blur md:p-8 print:border-0 print:bg-transparent print:p-0 print:shadow-none">
+          <div className="hidden border-b border-slate-200 pb-4 mb-6 print:flex items-center justify-between">
+            <BrandLink className="text-2xl" />
+            <div className="text-right text-xs text-slate-500">
+              <p className="font-bold text-slate-900">HireFit CV Review Report</p>
+              <p>ID: {id}</p>
+            </div>
+          </div>
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.25em] text-cyan-700">{language === "id" ? "Hasil review" : "Review result"}</p>
