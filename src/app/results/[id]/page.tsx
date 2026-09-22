@@ -216,7 +216,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <h1 className="mt-2 text-3xl font-black md:text-5xl">{language === "id" ? "Analisis CV terstruktur" : "Structured CV analysis"}</h1>
             </div>
             {review?.status === "completed" && visibleResult ? (
-              <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} />
+              <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} reviewId={id} />
             ) : review && !error ? (
               <p className="rounded-full bg-cyan-100 px-4 py-2 text-sm font-black text-cyan-800">Status: {review.status}</p>
             ) : null}
@@ -256,9 +256,11 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <TranslationWaiting targetLanguage={translatingLanguage} />
             ) : review?.status === "completed" && visibleResult ? (
               <div className="space-y-6">
-                <ResultView result={visibleResult} language={language} />
+                <div id="review-result-content" className="space-y-6">
+                  <ResultView result={visibleResult} language={language} />
+                </div>
                 <div className="flex justify-center pt-2">
-                  <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} />
+                  <ResultActions language={language} onLanguageChange={handleLanguageChange} translatingLanguage={translatingLanguage} reviewId={id} />
                 </div>
               </div>
             ) : (
