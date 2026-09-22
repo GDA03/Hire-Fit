@@ -4,14 +4,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { FileDown, Loader2 } from "lucide-react";
 import { downloadReviewPdf } from "@/lib/cv-review/download-pdf";
-import type { ReviewLanguage } from "@/lib/cv-review/types";
+import type { CVReviewResult, ReviewLanguage } from "@/lib/cv-review/types";
 
 type ResultActionsProps = {
   language: ReviewLanguage;
   onLanguageChange: (language: ReviewLanguage) => void;
   translatingLanguage?: ReviewLanguage | null;
   onDownloadPdf?: () => Promise<void> | void;
+  result?: CVReviewResult;
   reviewId?: string;
+  targetRole?: string;
 };
 
 const copyText = {
@@ -33,7 +35,9 @@ export function ResultActions({
   onLanguageChange,
   translatingLanguage,
   onDownloadPdf,
+  result,
   reviewId,
+  targetRole,
 }: ResultActionsProps) {
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -61,9 +65,15 @@ export function ResultActions({
     try {
       if (onDownloadPdf) {
         await onDownloadPdf();
-      } else {
+      } else if (result) {
         const filename = reviewId ? `HireFit-Review-${reviewId}.pdf` : "HireFit-CV-Review.pdf";
-        await downloadReviewPdf({ elementId: "review-result-content", filename });
+        downloadReviewPdf({
+          result,
+          language,
+          reviewId,
+          targetRole,
+          filename,
+        });
       }
     } catch (err) {
       console.error("PDF download error:", err);
