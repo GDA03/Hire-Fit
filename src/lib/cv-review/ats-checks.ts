@@ -17,18 +17,48 @@ export type ATSCheckInput = {
   jobDescription?: string;
 };
 
+export type ATSSignals = {
+  characterCount: number;
+  hasEmail: boolean;
+  hasPhone: boolean;
+  hasProfessionalLink: boolean;
+  detectedHeadings: string[];
+  missingHeadings: string[];
+  missingKeywords: string[];
+};
+
 const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PHONE_RE = /(\+?\d[\d\s().-]{7,}\d)/;
 const LINKEDIN_RE = /linkedin\.com\//i;
 const PORTFOLIO_RE = /(github\.com\/|behance\.net\/|dribbble\.com\/|portfolio|vercel\.app|netlify\.app)/i;
 const SECTION_HEADINGS = ["experience", "education", "skills", "projects", "summary"];
 
-export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
+export function buildATSSignals(input: { cvText: string; jobDescription?: string }): ATSSignals {
   const text = input.cvText.trim();
   const lower = text.toLowerCase();
+  const hasEmail = EMAIL_RE.test(text);
+  const hasPhone = PHONE_RE.test(text);
+  const hasProfessionalLink = LINKEDIN_RE.test(text) || PORTFOLIO_RE.test(text);
+  const detectedHeadings = SECTION_HEADINGS.filter((heading) => lower.includes(heading));
+  const missingHeadings = SECTION_HEADINGS.filter((heading) => !lower.includes(heading));
+  const missingKeywords = getMissingJDKeywords(text, input.jobDescription);
+
+  return {
+    characterCount: text.length,
+    hasEmail,
+    hasPhone,
+    hasProfessionalLink,
+    detectedHeadings,
+    missingHeadings,
+    missingKeywords,
+  };
+}
+
+export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
+  const signals = buildATSSignals({ cvText: input.cvText, jobDescription: input.jobDescription });
   const checks: ATSCheck[] = [];
 
-  if (text.length < 50) {
+  if (signals.characterCount < 50) {
     checks.push({
       id: "cv-too-short",
       severity: "critical",
@@ -36,12 +66,12 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
       detail: "Less than 50 readable characters are available for review.",
       suggestion: "Paste the full CV text manually or upload an ATS-readable PDF.",
     });
-  } else if (text.length < 500) {
+  } else if (signals.characterCount < 500) {
     checks.push({
       id: "cv-low-text",
       severity: "warning",
       title: "CV text may be incomplete",
-      detail: `Only ${text.length.toLocaleString()} characters are available for review.`,
+      detail: `Only ${signals.characterCount.toLocaleString()} characters are available for review.`,
       suggestion: "Review extracted text and paste missing sections before submitting.",
     });
   }
@@ -56,7 +86,7 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
     });
   }
 
-  if (!EMAIL_RE.test(text)) {
+  if (!signals.hasEmail) {
     checks.push({
       id: "missing-email",
       severity: "critical",
@@ -66,7 +96,7 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
     });
   }
 
-  if (!PHONE_RE.test(text)) {
+  if (!signals.hasPhone) {
     checks.push({
       id: "missing-phone",
       severity: "warning",
@@ -76,7 +106,7 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
     });
   }
 
-  if (!LINKEDIN_RE.test(text) && !PORTFOLIO_RE.test(text)) {
+  if (!signals.hasProfessionalLink) {
     checks.push({
       id: "missing-professional-link",
       severity: "info",
@@ -86,13 +116,12 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
     });
   }
 
-  const missingHeadings = SECTION_HEADINGS.filter((heading) => !lower.includes(heading));
-  if (missingHeadings.length >= 3) {
+  if (signals.missingHeadings.length >= 3) {
     checks.push({
       id: "missing-section-headings",
       severity: "warning",
       title: "Common CV headings are missing",
-      detail: `Missing or unreadable headings include: ${missingHeadings.join(", ")}.`,
+      detail: `Missing or unreadable headings include: ${signals.missingHeadings.join(", ")}.`,
       suggestion: "Use clear headings such as Summary, Experience, Education, Skills, and Projects.",
     });
   }
@@ -107,13 +136,12 @@ export function runATSChecks(input: ATSCheckInput): ATSCheck[] {
     });
   }
 
-  const missingKeywords = getMissingJDKeywords(text, input.jobDescription);
-  if (missingKeywords.length > 0) {
+  if (signals.missingKeywords.length > 0) {
     checks.push({
       id: "missing-jd-keywords",
       severity: "warning",
       title: "Some job description keywords are missing",
-      detail: `Potential missing terms: ${missingKeywords.slice(0, 8).join(", ")}.`,
+      detail: `Potential missing terms: ${signals.missingKeywords.slice(0, 8).join(", ")}.`,
       suggestion: "Add truthful evidence for relevant missing keywords if you have that experience.",
     });
   }

@@ -70,6 +70,9 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   const [resultsByLanguage, setResultsByLanguage] = useState<Partial<Record<ReviewLanguage, CVReviewResult>>>({});
   const [translationError, setTranslationError] = useState("");
   const [translatingLanguage, setTranslatingLanguage] = useState<ReviewLanguage | null>(null);
+  const [failedTranslationLanguage, setFailedTranslationLanguage] = useState<ReviewLanguage | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -125,10 +128,32 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       cancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [id]);
+  }, [id, retryCount]);
+
+  async function handleRetry() {
+    setRetrying(true);
+    setError("");
+    setTranslationError("");
+
+    try {
+      const response = await fetch(`/api/cv-reviews/${id}/retry`, { method: "POST" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Failed to retry CV review.");
+
+      setReview({ id, status: "queued" });
+      setPollCount(0);
+      setResultsByLanguage({});
+      setRetryCount((count) => count + 1);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to retry CV review.");
+    } finally {
+      setRetrying(false);
+    }
+  }
 
   async function handleLanguageChange(nextLanguage: ReviewLanguage) {
     setTranslationError("");
+    setFailedTranslationLanguage(null);
 
     if (resultsByLanguage[nextLanguage]) {
       setLanguage(nextLanguage);
@@ -148,6 +173,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       setResultsByLanguage((current) => ({ ...current, [nextLanguage]: data.result as CVReviewResult }));
       setLanguage(nextLanguage);
     } catch (err) {
+      setFailedTranslationLanguage(nextLanguage);
       setTranslationError(err instanceof Error ? err.message : "Failed to translate review.");
     } finally {
       setTranslatingLanguage(null);
@@ -188,14 +214,36 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <p className="rounded-full bg-cyan-100 px-4 py-2 text-sm font-black text-cyan-800">Status: {review.status}</p>
             ) : null}
           </div>
-          {translationError && <p className="mt-4 text-sm font-bold text-red-600">{translationError}</p>}
+          {translationError && (
+            <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-red-100 bg-red-50 p-3 text-sm font-bold text-red-600">
+              <p>{translationError}</p>
+              {failedTranslationLanguage && (
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange(failedTranslationLanguage)}
+                  disabled={Boolean(translatingLanguage)}
+                  className="rounded-xl bg-[#635BFF] px-4 py-2 text-xs font-black text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Try translation again
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="mt-6">
             {error ? (
               <div className="rounded-3xl border border-red-200 bg-red-50 p-4 font-semibold text-red-700">{error}</div>
             ) : review?.status === "failed" ? (
-              <div className="rounded-3xl border border-red-200 bg-red-50 p-4 font-semibold text-red-700">
-                {review.error ?? "CV review failed. Please try again."}
+              <div className="space-y-4 rounded-3xl border border-red-200 bg-red-50 p-5 font-semibold text-red-700">
+                <p>{review.error ?? "CV review failed. Please try again."}</p>
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  disabled={retrying}
+                  className="rounded-2xl bg-[#635BFF] px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {retrying ? "Retrying..." : "Try again"}
+                </button>
               </div>
             ) : translatingLanguage ? (
               <TranslationWaiting targetLanguage={translatingLanguage} />

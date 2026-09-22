@@ -1,4 +1,12 @@
-export type PDFParseConfidence = "good" | "partial" | "poor";
+import {
+  analyzePDFTextQuality,
+  mapPDFItemToTextItem,
+  reconstructPDFPageText,
+  type PDFParseConfidence,
+  type PDFTextItem,
+} from "./pdf-text";
+
+export type { PDFParseConfidence };
 export type PDFExtractionSource = "client" | "server";
 
 export type PDFExtractionResult = {
@@ -10,7 +18,6 @@ export type PDFExtractionResult = {
   preview: string;
   source: PDFExtractionSource;
 };
-
 export const MAX_SERVER_PDF_SIZE_BYTES = 5 * 1024 * 1024;
 
 export async function extractTextFromPDF(file: File): Promise<PDFExtractionResult> {
@@ -25,56 +32,38 @@ export async function extractTextFromPDF(file: File): Promise<PDFExtractionResul
 
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
+    const viewport = page.getViewport({ scale: 1 });
     const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .filter(Boolean)
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const mappedItems: PDFTextItem[] = content.items
+      .map(mapPDFItemToTextItem)
+      .filter((item): item is PDFTextItem => item !== null);
 
-    pageTexts.push(text);
+    const pageText = reconstructPDFPageText(mappedItems, viewport.width || 600);
+    pageTexts.push(pageText);
     page.cleanup();
   }
 
   const text = pageTexts.filter(Boolean).join("\n\n").trim();
   const characterCount = text.length;
-  const averageCharsPerPage = pdf.numPages > 0 ? characterCount / pdf.numPages : 0;
-  const confidence = getPDFParseConfidence(characterCount, averageCharsPerPage);
-  const warnings = getPDFParseWarnings(confidence, characterCount, averageCharsPerPage);
+  const quality = analyzePDFTextQuality(text, pdf.numPages);
 
   return {
     text,
     pageCount: pdf.numPages,
     characterCount,
-    confidence,
-    warnings,
+    confidence: quality.confidence,
+    warnings: quality.warnings,
     preview: text.slice(0, 600),
     source: "client",
   };
 }
 
 export function getPDFParseConfidence(characterCount: number, averageCharsPerPage: number): PDFParseConfidence {
-  if (characterCount >= 500 && averageCharsPerPage >= 100) return "good";
-  if (characterCount >= 50) return "partial";
-  return "poor";
+  const quality = analyzePDFTextQuality("A".repeat(characterCount), averageCharsPerPage > 0 ? Math.ceil(characterCount / averageCharsPerPage) : 1);
+  return quality.confidence;
 }
 
-export function getPDFParseWarnings(confidence: PDFParseConfidence, characterCount: number, averageCharsPerPage: number) {
-  if (confidence === "good") {
-    return ["PDF text extraction looks usable. Review extracted text before submitting."];
-  }
-
-  if (confidence === "partial") {
-    return [
-      `Only ${characterCount.toLocaleString()} characters were extracted. Some CV sections may be missing.`,
-      "Review extracted text and paste missing content manually before submitting.",
-    ];
-  }
-
-  return [
-    "PDF text extraction found very little readable text.",
-    `Average readable text is ${Math.round(averageCharsPerPage).toLocaleString()} characters per page. This PDF may be image-based or ATS-unfriendly.`,
-    "Paste CV text manually for a better review.",
-  ];
+export function getPDFParseWarnings(confidence: PDFParseConfidence, characterCount: number, averageCharsPerPage: number): string[] {
+  const quality = analyzePDFTextQuality("A".repeat(characterCount), averageCharsPerPage > 0 ? Math.ceil(characterCount / averageCharsPerPage) : 1);
+  return quality.warnings;
 }

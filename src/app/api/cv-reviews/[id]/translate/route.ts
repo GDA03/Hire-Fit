@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { publicModelErrorMessage } from "@/lib/cv-review/model";
 import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
 import { translateReviewResult } from "@/lib/cv-review/translation";
 import type { ReviewLanguage } from "@/lib/cv-review/types";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function readLanguage(value: unknown): ReviewLanguage | null {
   return value === "en" || value === "id" ? value : null;
@@ -45,7 +46,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ id, language, result: translated, cached: false });
   } catch (error) {
     console.error("Review translation error", error);
-    const message = error instanceof Error ? error.message : "Failed to translate review.";
-    return NextResponse.json({ error: message }, { status: 502 });
+    return NextResponse.json({ error: publicModelErrorMessage("translate") }, { status: 502 });
   }
 }

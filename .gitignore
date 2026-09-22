@@ -41,3 +41,12 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# agent & scratch
+.agents/
+.claude/
+.omp/
+.playwright-mcp/
+*.png
+skills-lock.json
+HANDOFF.md

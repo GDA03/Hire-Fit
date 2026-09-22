@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import {
-  getPDFParseConfidence,
-  getPDFParseWarnings,
   MAX_SERVER_PDF_SIZE_BYTES,
   type PDFExtractionResult,
 } from "@/lib/cv-review/pdf-extraction";
+import {
+  analyzePDFTextQuality,
+  mapPDFItemToTextItem,
+  reconstructPDFPageText,
+  type PDFTextItem,
+} from "@/lib/cv-review/pdf-text";
 
 export const runtime = "nodejs";
 
@@ -44,29 +48,27 @@ async function extractServerPDF(file: File): Promise<PDFExtractionResult> {
 
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
+    const viewport = page.getViewport({ scale: 1 });
     const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ("str" in item ? item.str : ""))
-      .filter(Boolean)
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const mappedItems: PDFTextItem[] = content.items
+      .map(mapPDFItemToTextItem)
+      .filter((item): item is PDFTextItem => item !== null);
 
+    const text = reconstructPDFPageText(mappedItems, viewport.width || 600);
     pageTexts.push(text);
     page.cleanup();
   }
 
   const text = pageTexts.filter(Boolean).join("\n\n").trim();
   const characterCount = text.length;
-  const averageCharsPerPage = pdf.numPages > 0 ? characterCount / pdf.numPages : 0;
-  const confidence = getPDFParseConfidence(characterCount, averageCharsPerPage);
+  const quality = analyzePDFTextQuality(text, pdf.numPages);
 
   return {
     text,
     pageCount: pdf.numPages,
     characterCount,
-    confidence,
-    warnings: getPDFParseWarnings(confidence, characterCount, averageCharsPerPage),
+    confidence: quality.confidence,
+    warnings: quality.warnings,
     preview: text.slice(0, 600),
     source: "server",
   };

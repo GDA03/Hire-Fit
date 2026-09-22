@@ -1,9 +1,6 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { readEnv } from "@/lib/env";
-import { extractJsonObject } from "./validation";
-import type { CVReviewResult, ReviewLanguage } from "./types";
-
-const fallbackModel = "gemini-2.5-flash-lite";
+import { generateJsonText } from "@/lib/cv-review/model";
+import { extractJsonObject, validateCVReviewResult } from "./validation";
+import type { CVReviewResult, ReviewLanguage, SectionKey } from "./types";
 
 function languageName(language: ReviewLanguage) {
   return language === "id" ? "Bahasa Indonesia" : "English";
@@ -28,16 +25,54 @@ JSON to translate:
 ${JSON.stringify(result)}`;
 }
 
-export async function translateReviewResult(result: CVReviewResult, targetLanguage: ReviewLanguage): Promise<CVReviewResult> {
-  const apiKey = readEnv("GEMINI_API_KEY");
-  if (!apiKey) throw new Error("Missing GEMINI_API_KEY.");
+export function validateTranslatedResult(
+  translated: unknown,
+  original: CVReviewResult,
+  hasJobTarget: boolean,
+): CVReviewResult {
+  const parsed = validateCVReviewResult(translated, { hasJobTarget });
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: readEnv("GEMINI_TRANSLATION_MODEL") ?? readEnv("GEMINI_MODEL") ?? fallbackModel,
-    generationConfig: { responseMimeType: "application/json" },
+  if (parsed.overallScore !== original.overallScore) {
+    throw new Error(
+      `Translation altered overallScore: expected ${original.overallScore}, got ${parsed.overallScore}.`,
+    );
+  }
+
+  for (const [key, originalSection] of Object.entries(original.sections)) {
+    const translatedSection = parsed.sections[key as SectionKey];
+    if (!translatedSection) {
+      throw new Error(`Translation missing section ${key}.`);
+    }
+    if (translatedSection.score !== originalSection.score) {
+      throw new Error(
+        `Translation altered score for section ${key}: expected ${originalSection.score}, got ${translatedSection.score}.`,
+      );
+    }
+    if (translatedSection.priority !== originalSection.priority) {
+      throw new Error(
+        `Translation altered priority for section ${key}: expected ${originalSection.priority}, got ${translatedSection.priority}.`,
+      );
+    }
+  }
+
+  if (hasJobTarget && original.jobFit && parsed.jobFit && parsed.jobFit.score !== original.jobFit.score) {
+    throw new Error("Translation altered score for jobFit.");
+  }
+
+  return parsed;
+}
+
+export async function translateReviewResult(result: CVReviewResult, targetLanguage: ReviewLanguage): Promise<CVReviewResult> {
+  const hasJobTarget = Boolean(result.jobFit && result.tailoredContent && result.experienceMatch);
+  const rawText = await generateJsonText({
+    prompt: buildReviewTranslationPrompt(result, targetLanguage),
+    action: "translate",
+    geminiModelEnv: "GEMINI_TRANSLATION_MODEL",
+    openRouterModelsEnv: "OPENROUTER_TRANSLATION_MODELS",
+    providerOrderEnv: "AI_TRANSLATION_PROVIDER_ORDER",
+    validateJson: (value) => validateTranslatedResult(value, result, hasJobTarget),
   });
 
-  const response = await model.generateContent(buildReviewTranslationPrompt(result, targetLanguage));
-  return extractJsonObject(response.response.text()) as CVReviewResult;
+  const parsed = extractJsonObject(rawText);
+  return validateTranslatedResult(parsed, result, hasJobTarget);
 }

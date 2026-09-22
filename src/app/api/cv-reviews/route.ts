@@ -1,5 +1,6 @@
 import { after, NextResponse } from "next/server";
-import { validateAnalyzeRequest } from "@/lib/cv-review/validation";
+import { publicModelErrorMessage, isAnalyzeRequestError } from "@/lib/cv-review/model";
+import { enforceAnalysisInputBudget, validateAnalyzeRequest } from "@/lib/cv-review/validation";
 import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
 import { runGeminiAnalysis } from "@/app/api/analyze/route";
 import { readEnv } from "@/lib/env";
@@ -23,8 +24,9 @@ async function processReviewInBackground(reviewId: string) {
     state.result = await runGeminiAnalysis(state.request);
     state.status = "completed";
   } catch (error) {
+    console.error("Background analysis error", error);
     state.status = "failed";
-    state.error = error instanceof Error ? error.message : "Analysis failed";
+    state.error = publicModelErrorMessage("analyze");
   }
 
   state.updatedAt = Date.now();
@@ -34,8 +36,7 @@ async function processReviewInBackground(reviewId: string) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const analyzeRequest = validateAnalyzeRequest(body);
-
+    const analyzeRequest = enforceAnalysisInputBudget(validateAnalyzeRequest(body));
     const id = `rv_${uuidv4().replace(/-/g, "")}`;
     const now = Date.now();
 
@@ -66,8 +67,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ id });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to create review.";
-    const status = message.includes("must") || message.includes("too long") || message.includes("not supported") ? 400 : 500;
+    const status = isAnalyzeRequestError(error) ? 400 : 502;
+    const message = status === 400 && error instanceof Error ? error.message : publicModelErrorMessage("analyze");
+    console.error("Review creation error", error);
     return NextResponse.json({ error: message }, { status });
   }
 }

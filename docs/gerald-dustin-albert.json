@@ -1,0 +1,280 @@
+{
+  "full_name": "Gerald Dustin Albert",
+  "title": "AI Fullstack Engineer",
+  "email": "albertgerald26@gmail.com",
+  "phone_numbers": [
+    "+6285156183013"
+  ],
+  "location": "Karawang, West Java, Indonesia",
+  "summary": "Fullstack Engineer focused on building practical AI products across full-stack web development, RAG systems, LLM integration, data processing, and machine learning workflows. Experienced in developing AI-powered applications with Next.js, Python, TensorFlow, vector search, and Gemini/OpenRouter APIs, with a strong ability to translate real-world problems into usable, maintainable solutions.",
+  "skills": {
+    "hard_skills": [
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "Java",
+      "PHP",
+      "SQL",
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "Node.js",
+      "Express.js",
+      "FastAPI",
+      "Laravel",
+      "Django",
+      "REST APIs",
+      "TensorFlow",
+      "scikit-learn",
+      "LangChain",
+      "RAG",
+      "Vector Embeddings",
+      "NLP",
+      "OCR",
+      "Prompt Engineering",
+      "Local LLMs",
+      "MySQL",
+      "PostgreSQL",
+      "MongoDB",
+      "Supabase",
+      "TiDB Cloud",
+      "ChromaDB",
+      "Git",
+      "Docker",
+      "Linux",
+      "Vercel",
+      "Google Cloud",
+      "Figma",
+      "Draw.io",
+      "GitHub",
+      "Canva",
+      "laragon",
+      "Xampp",
+      "Visual Studio",
+      "Trello",
+      "Jira",
+      "Microsoft Office"
+    ],
+    "soft_skills": [
+      "Public Speaking",
+      "Leadership",
+      "Team Management",
+      "Problem Solving",
+      "Communication",
+      "Stakeholder Communication",
+      "Cross-functional Collaboration"
+    ],
+    "tools_and_technologies": [
+      "Drizzle ORM",
+      "TiDB Vector Search",
+      "Gemini API",
+      "OpenRouter",
+      "Ollama",
+      "Streamlit",
+      "pytest",
+      "GitHub Actions",
+      "pdfjs-dist",
+      "shadcn/ui",
+      "Recharts",
+      "SQLAlchemy",
+      "FastAPI",
+      "TensorFlow.js",
+      "CNNs"
+    ]
+  },
+  "experience": [
+    {
+      "company": "Balai Besar Peramalan Organisme Pengganggu Tumbuhan (BBPOPT)",
+      "title": "IT Intern",
+      "location": "",
+      "start_date": "2025-01",
+      "end_date": "",
+      "currently_working": true,
+      "duration_months": 12,
+      "description": "Prepared weekly digital pest-outbreak reports by organizing multi-source operational information into clearer monitoring outputs for internal communication and decision support. Explored practical AI/data opportunities for agricultural monitoring workflows, including structured data preparation, report automation potential, and ways to improve information retrieval from recurring operational documents. Supported office internet network planning through connectivity documentation, issue identification, and practical improvement recommendations to keep digital operations more reliable.",
+      "achievements": []
+    },
+    {
+      "company": "Prysmian Cables Indonesia",
+      "title": "Internship",
+      "location": "",
+      "start_date": "2021-01",
+      "end_date": "2021-12",
+      "currently_working": false,
+      "duration_months": 12,
+      "description": "Analyzed operational documentation and production-related data to support structured reporting, workflow visibility, and data-driven coordination in a manufacturing and energy-sector environment. Built early discipline in data handling, process understanding, problem decomposition, and stakeholder communication that supports later AI engineering and full-stack product work.",
+      "achievements": []
+    }
+  ],
+  "total_experience_months": 132,
+  "education": [
+    {
+      "institution": "Singaperbangsa Karawang University",
+      "degree": "Bachelor of Information Systems",
+      "major": "Information Systems",
+      "start_date": "2022-01",
+      "end_date": "2026-12",
+      "gpa": "3.91/4.00"
+    },
+    {
+      "institution": "Bangkit Academy by Google, GoTo, and Traveloka",
+      "degree": "Machine Learning Path",
+      "major": "Machine Learning",
+      "start_date": "2024-01",
+      "end_date": "2024-12",
+      "gpa": "Grade A (94.60/100)"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "DeepLearning.AI TensorFlow Developer Specialization",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "Advanced Computer Vision with TensorFlow",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "Build Basic Generative Adversarial Networks (GANs)",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "Custom and Distributed Training",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "Generative AI for Everyone",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "TensorFlow.js browser models",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "CNNs in TensorFlow",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "Custom Models/Layers/Loss Functions",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    },
+    {
+      "name": "TensorFlow Data Pipelines",
+      "issuer": "Coursera",
+      "issue_date": "",
+      "expiration_date": ""
+    }
+  ],
+  "languages": [
+    {
+      "language": "Indonesian",
+      "proficiency": "Native"
+    },
+    {
+      "language": "English",
+      "proficiency": "Intermediate"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Rivia Skincare AI Chatbot",
+      "description": "Engineered a RAG-powered skincare consultation platform that transforms product knowledge into grounded, personalized recommendations. Improved recommendation trust and system maintainability by implementing 768-dimensional vector retrieval, protected admin CRUD, JWT authentication, and context-grounded LLM responses to reduce hallucination risk.",
+      "tech_stack": [
+        "Next.js",
+        "Tailwind CSS",
+        "Drizzle ORM",
+        "TiDB Vector Search",
+        "Gemini/OpenRouter"
+      ]
+    },
+    {
+      "name": "Resilient Smart Tracker",
+      "description": "Built a personal finance intelligence dashboard that centralizes transactions, wallets, savings goals, subscriptions, 7-day cash-flow forecasting, and AI receipt scanning. Converted financial prediction outputs into actionable planning insights by visualizing actual-vs-predicted cash flow and model health indicators.",
+      "tech_stack": [
+        "FastAPI",
+        "React",
+        "SQLAlchemy",
+        "scikit-learn",
+        "Gemini OCR",
+        "Recharts"
+      ]
+    },
+    {
+      "name": "Local RAG PDF Chat",
+      "description": "Engineered a privacy-focused local RAG application that enables offline PDF search and question answering through local embeddings, vector indexing, configurable chunking, and local LLM inference. Strengthened retrieval quality and development reliability by implementing multi-query retrieval, automated tests, pre-commit hooks, and GitHub Actions CI.",
+      "tech_stack": [
+        "Python",
+        "Ollama",
+        "LangChain",
+        "Streamlit",
+        "ChromaDB",
+        "pytest",
+        "GitHub Actions"
+      ]
+    },
+    {
+      "name": "Advokata - AI Legal Chatbot",
+      "description": "Led a Bangkit Academy capstone AI chatbot project by coordinating machine learning delivery, cross-functional collaboration, mentor feedback, and project execution. Developed machine learning components for an AI legal consultation use case by preparing data pipelines, training and evaluating TensorFlow models, and planning integration points for chatbot-based legal assistance.",
+      "tech_stack": [
+        "Python",
+        "TensorFlow",
+        "preprocessing",
+        "model evaluation"
+      ]
+    },
+    {
+      "name": "HireFit",
+      "description": "Engineered a full-stack AI CV/JD fit reviewer that helps candidates identify job-fit gaps, missing keywords, weak resume bullets, interview preparation needs, and improvement priorities through structured Gemini-based analysis. Streamlined job-application preparation by implementing browser-side PDF extraction, manual CV/JD input, and an internal /api/analyze endpoint.",
+      "tech_stack": [
+        "Next.js App Router",
+        "TypeScript",
+        "Tailwind CSS",
+        "Gemini API",
+        "pdfjs-dist"
+      ]
+    }
+  ],
+  "links": {
+    "linkedin": "linkedin.com/in/gdustin",
+    "github": "github.com/GDA03",
+    "portfolio": "portofolio-gerald.vercel.app",
+    "other_links": []
+  },
+  "analysis": {
+    "core_competencies": [
+      "RAG Systems",
+      "LLM Integration",
+      "Full-Stack Web Development",
+      "Machine Learning Engineering",
+      "Data Processing",
+      "Vector Search",
+      "Python & JavaScript Ecosystems"
+    ],
+    "seniority_level": "junior",
+    "strengths_summary": "Strong academic background with high GPA and prestigious scholarship. Demonstrated expertise in modern AI stack (RAG, LLMs, TensorFlow) through multiple complex projects. Proven leadership in capstone projects and organizational roles. High proficiency in both frontend (Next.js) and backend (Python/FastAPI) technologies.",
+    "possible_job_matches": [
+      "AI Engineer",
+      "Full Stack Developer (AI Focus)",
+      "Machine Learning Engineer",
+      "RAG Developer",
+      "Software Engineer - Applied AI"
+    ],
+    "total_experience_months": 132
+  }
+}

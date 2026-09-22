@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { getReviewState, saveReviewState } from "@/lib/cv-review/store";
+import { publicModelErrorMessage } from "@/lib/cv-review/model";
 import { runGeminiAnalysis } from "@/app/api/analyze/route";
 import { readEnv } from "@/lib/env";
 
-export const maxDuration = 60;
+export const maxDuration = 180;
 
 async function handler(request: Request) {
   try {
@@ -36,8 +37,9 @@ async function handler(request: Request) {
       state.updatedAt = Date.now();
       await saveReviewState(state);
     } catch (analysisError) {
+      console.error("Worker analysis error", analysisError);
       state.status = "failed";
-      state.error = analysisError instanceof Error ? analysisError.message : "Analysis failed";
+      state.error = publicModelErrorMessage("analyze");
       state.updatedAt = Date.now();
       await saveReviewState(state);
     }
